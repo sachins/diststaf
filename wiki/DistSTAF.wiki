@@ -1,3 +1,3 @@
-== Distributed Computing using STAF ==
+=== Distributed Computing using STAF ===
   * [http://staf.sf.net STAF Homepage]
   * [https://sourceforge.net/softwaremap/trove_list.php?form_cat=308 Distributed Computing related projects at SourceForge]
