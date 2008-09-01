@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Apr 22, 2007 2:32:38 PM                                                        
+
+     diststaf    
+     This project provides features of distributed computing using Software Testing Automation Framework (STAF). For more details about STAF visit http://staf.sf.net.
+                   
+     sachin                                                                
+     ====================================================================== -->
+<project name="diststaf" default="all" basedir=".">
+	<description>
+            This project provides features of distributed computing using Software Testing Automation Framework (STAF). For more details about STAF visit http://staf.sf.net.
+    </description>
+
+	<!-- set global properties for the service EDIT HERE -->
+	<property name="service.name" value="diststaf" />
+	<property name="service.class" value="name.sachin.diststaf.service.DistStafService" />
+	<!-- set global properties for the service DO NOT EDIT BELOW HERE -->
+	<property name="section.name" value="staf/service/info" />
+	<property name="src.dir" value="service/src" />
+	<property name="target.dir" value="target" />
+	<property name="classes.dir" value="${target.dir}/STAF-INF/classes" />
+	<property name="packagedjar.dir" value="${target.dir}/STAF-INF/jars" />
+
+	<property name="jar.dir" value="${target.dir}/jar" />
+	<property name="mvn.repo" value="${user.home}\.m2\repository" />
+
+	<!-- There variables are passed through the command line -->
+	<property name="versioninfo.version" value="Not Set" />
+	<property name="versioninfo.builddate" value="Not Set" />
+	<property name="versioninfo.builder" value="Not Set" />
+
+	<target name="all" depends="init,compile,stafjar" />
+
+	<target name="init" depends="clean">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${jar.dir}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source ">
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src.dir}" destdir="${classes.dir}">
+			<classpath location="/opt/staf/lib/JSTAF.jar" />
+			<classpath location="/home/sachin/staf321/rel/linux/staf/debug/lib/JSTAF.jar" />
+			<classpath location="C:\STAF\bin\JSTAF.jar" />
+			<classpath location="C:\STAF32\bin\JSTAF.jar" />
+			<classpath location="${mvn.repo}/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
+			<!--<classpath location="jstaf/src" />-->
+		</javac>
+	</target>
+
+	<target name="stafjar" depends="compile" description="generate the STAF Jar File">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${jar.dir}" />
+		<mkdir dir="${packagedjar.dir}" />
+		<copy todir="${packagedjar.dir}" file="${mvn.repo}/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}/resources">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<jar jarfile="${service.name}.jar" update="false" basedir="." includes=".">
+			<fileset dir="${target.dir}" includes="STAF-INF/**" />
+			<manifest>
+				<section name="${section.name}">
+					<attribute name="Service-Class" value="${service.class}" />
+					<attribute name="Packaged-Jars" value="log4j-1.2.14" />
+				</section>
+				<section name="VERSION INFO">
+					<attribute name="version" value="${versioninfo.version}" />
+					<attribute name="builddate" value="${versioninfo.builddate}" />
+					<attribute name="builder" value="${versioninfo.builder}" />
+				</section>
+			</manifest>
+		</jar>
+		<move file="${service.name}.jar" todir="${jar.dir}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${target.dir}/STAF-INF" />
+		<delete dir="${jar.dir}" />
+	</target>
+</project>

@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>name.sachin.diststaf</groupId>
+	<artifactId>mavenx2</artifactId>
+	<packaging>pom</packaging>
+	<name>diststaf</name>
+	<version>0.0.1</version>
+	<description>
+		This project provides features of distributed computing using Software Testing Automation Framework (STAF). For
+		more details about STAF visit http://staf.sf.net.
+	</description>
+	<url>http://wiki.sachin.name/ow.asp?Thesis</url>
+	<inceptionYear>2006</inceptionYear>
+	<mailingLists>
+		<mailingList>
+			<name>${pom.name} Dev List</name>
+		</mailingList>
+		<mailingList>
+			<name>${pom.name} User List</name>
+		</mailingList>
+	</mailingLists>
+	<developers>
+		<developer>
+			<id>1</id>
+			<name>Sachin Shah</name>
+			<email>shahsachin@gmail.com</email>
+			<url>http://sachin.name</url>
+			<organization>SDSU</organization>
+		</developer>
+	</developers>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.5</source>
+						<target>1.5</target>
+						<fork>true</fork>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<contributors>
+		<contributor>
+			<name>Roger Whitney</name>
+			<email>whitney@cs.sdsu.edu</email>
+			<organization>SDSU</organization>
+		</contributor>
+	</contributors>
+	<organization>
+		<name>San Diego State University</name>
+		<url>http://sdsu.edu</url>
+	</organization>
+	<modules>
+		<module>jstaf</module>
+		<module>service</module>
+	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+	</dependencies>
+</project>
