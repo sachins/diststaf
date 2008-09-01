@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>name.sachin.diststaf</groupId>
+		<artifactId>mavenx2</artifactId>
+		<version>0.0.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>name.sachin.diststaf.service</groupId>
+	<artifactId>diststaf-service</artifactId>
+	<packaging>jar</packaging>
+	<name>diststaf-service</name>
+	<version>0.0.1</version>
+	<description>This is STAF service for diststaf framework.</description>
+	<developers>
+		<developer>
+			<id>sachin</id>
+			<name>Sachin Shah</name>
+			<email>shahsachin@gmail.com</email>
+			<url>http://sachin.name</url>
+			<organization>SDSU</organization>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Roger Whitney</name>
+			<email>whitney@cs.sdsu.edu</email>
+			<organization>SDSU</organization>
+		</contributor>
+	</contributors>
+	<organization>
+		<name>San Diego State University</name>
+		<url>http://sdsu.edu</url>
+	</organization>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>name.sachin.diststaf.service.DistStafService</mainClass>
+							<addClasspath>true</addClasspath>
+						</manifest>
+						<manifestSections>
+							<manifestSection>
+								<name>staf/service/info</name>
+								<manifestEntries>
+									<Service-Class>name.sachin.diststaf.service.DistStafService</Service-Class>
+								</manifestEntries>
+							</manifestSection>
+						</manifestSections>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
