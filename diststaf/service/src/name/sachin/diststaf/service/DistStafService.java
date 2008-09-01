@@ -136,6 +136,15 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		}
 		return null;
 	}
+	
+	protected Resource findResource(String resName) {
+		for (Resource eachResource : resources) {
+			if (eachResource.getName().equalsIgnoreCase(resName)) {
+				return eachResource;
+			}
+		}
+		return null;
+	}
 
 	/*
 	 * (non-Javadoc)

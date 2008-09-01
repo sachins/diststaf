@@ -1,5 +1,6 @@
 package name.sachin.diststaf.obj;
 
+import java.util.ArrayList;
 import java.util.List;
 import name.sachin.diststaf.service.wrapper.DistStafConstants.JobStatus;
 
@@ -34,10 +35,20 @@ public class Job {
 		super();
 		this.name = name;
 		this.algorithm = algorithm;
+		this.resources = new ArrayList<Resource>();
 	}
 
 	public List<Resource> getResources() {
 		return this.resources;
+	}
+	
+	public Resource findResource(String resName) {
+		for (Resource eachResource : resources) {
+			if (eachResource.getName().equalsIgnoreCase(resName)) {
+				return eachResource;
+			}
+		}
+		return null;
 	}
 	
 	public void execute() {
