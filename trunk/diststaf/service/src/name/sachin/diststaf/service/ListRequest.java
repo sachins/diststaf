@@ -31,6 +31,7 @@ public class ListRequest extends AbstractStafRequest {
 		listJobMapClass.addKey("name", "Name");
 		listJobMapClass.addKey("algorithm", "Algorithm");
 		listJobMapClass.addKey("status", "Status");
+		listJobMapClass.addKey("resources", "Resources");
 	}
 
 	private static STAFMapClassDefinition listResourceMapClass;
@@ -102,6 +103,7 @@ public class ListRequest extends AbstractStafRequest {
 			resultMap.put("name", eachJob.getName());
 			resultMap.put("algorithm", eachJob.getAlgorithm());
 			resultMap.put("status", eachJob.getStatus());
+			resultMap.put("resources", eachJob.getResources());
 			resultList.add(resultMap);
 		}
 		mc.setRootObject(resultList);

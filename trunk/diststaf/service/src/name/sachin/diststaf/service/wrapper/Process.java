@@ -2,6 +2,7 @@ package name.sachin.diststaf.service.wrapper;
 
 import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -38,6 +39,11 @@ public class Process extends StafService {
 			String result = stafHandle.submit(stafHost, getServiceName(), req);
 			STAFMarshallingContext mc = STAFMarshallingContext
 					.unmarshall(result);
+			if(mc.getRootObject() instanceof String) {
+				HashMap<String, String> resultMap = new HashMap<String, String>();
+				resultMap.put("result", (String)mc.getRootObject());
+				return resultMap;
+			}
 			return (Map) mc.getRootObject();
 		} catch (STAFException e) {
 			throw new DistStafException(e);

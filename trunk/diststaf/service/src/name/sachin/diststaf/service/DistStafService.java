@@ -196,6 +196,8 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		requestHandlers.add(new AddResourceRequest(this));
 		requestHandlers.add(new ListRequest(this));
 		requestHandlers.add(new DeleteJobRequest(this));
+		requestHandlers.add(new AssignResourceToJobRequest(this));
+		requestHandlers.add(new ExecuteJobRequest(this));
 	}
 
 	protected Job findJob(String jobName) {

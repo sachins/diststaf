@@ -9,15 +9,11 @@ import com.ibm.staf.STAFUtil;
 import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
+import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
 
 public class AddJobRequest extends AbstractStafRequest {
 
-	private static final int ADDJOB_TRUST_LEVEL = 3;
-
 	private static final Logger LOG = Logger.getLogger(AddJobRequest.class);
-
-	public static final int ADD_JOB_FAILED = 4002;
-	public static final int JOB_EXISTS = 4001;
 
 	public AddJobRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;
