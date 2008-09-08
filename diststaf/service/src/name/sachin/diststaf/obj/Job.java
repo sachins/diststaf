@@ -2,7 +2,14 @@ package name.sachin.diststaf.obj;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.ibm.staf.STAFException;
+import com.ibm.staf.STAFHandle;
+
+import name.sachin.diststaf.service.wrapper.Process;
 import name.sachin.diststaf.service.wrapper.DistStafConstants.JobStatus;
+import name.sachin.diststaf.service.wrapper.DistStafConstants.ResourceType;
 
 public class Job {
 	private String name;
@@ -51,11 +58,18 @@ public class Job {
 		return null;
 	}
 	
-	public void execute() {
+	@SuppressWarnings("unchecked")
+	public List execute() throws STAFException {
+		List resultList = new ArrayList();
 		for(Resource r : resources) {
-			//TODO: distribute job equally among resources
-			//with provided input
+			if(ResourceType.MACHINE == r.getType()) {
+				STAFHandle handle = new STAFHandle(r.getName());
+				Process proc = new Process(r.getName(), handle);
+				Map resultMap = proc.start(this.getAlgorithm());
+				resultList.add(resultMap);
+			}
 		}
+		return resultList;
 	}
 
 	public String toString() {

@@ -29,5 +29,9 @@ public class Resource {
 	public void setType(ResourceType type) {
 		this.type = type;
 	}
+	
+	public String toString() {
+		return "{Resource name:" + name + ",type:" + type + "}";
+	}
 
 }

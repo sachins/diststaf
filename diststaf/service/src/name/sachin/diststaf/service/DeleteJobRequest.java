@@ -7,14 +7,11 @@ import com.ibm.staf.STAFUtil;
 import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
+import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
 
 public class DeleteJobRequest extends AbstractStafRequest {
 
 	private static final Logger LOG = Logger.getLogger(DeleteJobRequest.class);
-
-	private static final int DELETE_JOB_TRUST_LEVEL = 3;
-
-	public static final int DELETE_JOB_FAILED = 4003;
 
 	public DeleteJobRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;

@@ -9,17 +9,11 @@ import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
 
 import name.sachin.diststaf.obj.Resource;
-import name.sachin.diststaf.service.wrapper.DistStafConstants.ResourceType;
+import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
 
 public class AddResourceRequest extends AbstractStafRequest {
 	
-	private static final int ADDRESOURCE_TRUST_LEVEL = 3;
-	
 	private static final Logger LOG = Logger.getLogger(AddResourceRequest.class);
-
-	private static final int RESOURCE_EXISTS = 4010;
-
-	private static final int ADD_RESOURCE_FAILED = 4011;
 	
 	public AddResourceRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;

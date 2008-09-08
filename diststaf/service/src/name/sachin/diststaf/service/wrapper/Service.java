@@ -49,9 +49,9 @@ public class Service extends StafService {
 			LOG.info(this + " - Sending request: add");
 			String req = "add service " + srvName;
 			if (library != null)
-				req += " " + library;
+				req += " library " + library;
 			if (execute != null)
-				req += " " + execute.getAbsolutePath();
+				req += " execute " + execute.getAbsolutePath();
 			String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME, req);
 			if (result.length() > 0) {
 				throw new DistStafException(result);

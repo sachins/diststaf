@@ -10,21 +10,13 @@ import com.ibm.staf.STAFUtil;
 import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
+import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
 
 public class AssignResourceToJobRequest extends AbstractStafRequest {
 
-	private static final int ASSIGNRESOURCETOJOB_TRUST_LEVEL = 3;
-
 	private static final Logger LOG = Logger
-			.getLogger(AddResourceRequest.class);
+			.getLogger(AssignResourceToJobRequest.class);
 
-	private static final int JOB_DOESNT_EXIST = 4021;
-
-	private static final int RESOURCE_DOESNT_EXIST = 4020;
-
-	private static final int RESOURCE_ALREADY_ASSIGNED = 4022;
-
-	private static final int ASSIGN_RESOURCE_TO_JOB_FAILED = 4023;
 
 	public AssignResourceToJobRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;
