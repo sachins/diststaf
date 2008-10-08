@@ -1,3 +1,4 @@
 === Distributed Computing using STAF ===
   * [http://staf.sf.net STAF Homepage]
   * [https://sourceforge.net/softwaremap/trove_list.php?form_cat=308 Distributed Computing related projects at SourceForge]
+  * [http://google.com/codesearch?hl=en&q=show:l2ZHgzuWqYA:95rp4kfHot4&ct=rdl&cs_p=cvs%20:pserver:anonymous@staf.cvs.sourceforge.net:/cvsroot/staf%20src&cs_f=staf STAF Source Code]
