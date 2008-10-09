@@ -1,6 +1,6 @@
 package name.sachin.diststaf.service.wrapper;
 
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.STAF_LOCAL_HOST;
+import static name.sachin.diststaf.service.DistStafConstants.STAF_LOCAL_HOST;
 import name.sachin.diststaf.exception.DistStafException;
 
 import com.ibm.staf.STAFException;

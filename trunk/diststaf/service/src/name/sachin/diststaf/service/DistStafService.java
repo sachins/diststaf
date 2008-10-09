@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import name.sachin.diststaf.obj.Resource;
 import name.sachin.diststaf.obj.Job;
-import name.sachin.diststaf.service.wrapper.DistStafConstants.ResourceType;
+import name.sachin.diststaf.service.DistStafConstants.ResourceType;
 
 import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;

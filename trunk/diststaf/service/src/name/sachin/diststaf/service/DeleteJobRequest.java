@@ -7,7 +7,8 @@ import com.ibm.staf.STAFUtil;
 import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+
+import static name.sachin.diststaf.service.DistStafConstants.*;
 
 public class DeleteJobRequest extends AbstractStafRequest {
 

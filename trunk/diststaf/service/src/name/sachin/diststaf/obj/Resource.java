@@ -1,6 +1,6 @@
 package name.sachin.diststaf.obj;
 
-import name.sachin.diststaf.service.wrapper.DistStafConstants.ResourceType;
+import name.sachin.diststaf.service.DistStafConstants.ResourceType;
 
 public class Resource {
 

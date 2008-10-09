@@ -8,7 +8,7 @@ import name.sachin.diststaf.exception.DistStafException;
 
 import org.apache.log4j.Logger;
 
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+import static name.sachin.diststaf.service.DistStafConstants.*;
 
 import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;

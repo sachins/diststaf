@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import name.sachin.diststaf.exception.DistStafException;
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+import static name.sachin.diststaf.service.DistStafConstants.*;
 
 import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
