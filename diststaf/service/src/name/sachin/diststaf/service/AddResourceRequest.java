@@ -9,7 +9,7 @@ import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
 
 import name.sachin.diststaf.obj.Resource;
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+import static name.sachin.diststaf.service.DistStafConstants.*;
 
 public class AddResourceRequest extends AbstractStafRequest {
 	

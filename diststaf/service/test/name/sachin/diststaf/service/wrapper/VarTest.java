@@ -2,7 +2,7 @@ package name.sachin.diststaf.service.wrapper;
 
 import static org.junit.Assert.*;
 
-import name.sachin.diststaf.service.wrapper.DistStafConstants.VarPoolType;
+import name.sachin.diststaf.service.DistStafConstants.VarPoolType;
 
 import org.junit.After;
 import org.junit.Before;

@@ -9,7 +9,8 @@ import com.ibm.staf.STAFUtil;
 import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+
+import static name.sachin.diststaf.service.DistStafConstants.*;
 
 public class AddJobRequest extends AbstractStafRequest {
 
@@ -25,8 +26,10 @@ public class AddJobRequest extends AbstractStafRequest {
 		parser = new STAFCommandParser();
 		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("ALGORITHM", 1, STAFCommandParser.VALUEREQUIRED);
+		parser.addOption("ALGORITHMTYPE", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("DATA", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOptionNeed("ADDJOB", "ALGORITHM");
+		parser.addOptionNeed("ADDJOB", "ALGORITHMTYPE");
 		LOG.debug("Initialized AddJobRequest Parser Successfully");
 	}
 
@@ -43,8 +46,9 @@ public class AddJobRequest extends AbstractStafRequest {
 
 		STAFResult res;
 
-		res = STAFUtil.resolveRequestVar(parsedRequest.optionValue(getRequestName()),
-				service.getStafHandle(), reqInfo.requestNumber);
+		res = STAFUtil.resolveRequestVar(parsedRequest
+				.optionValue(getRequestName()), service.getStafHandle(),
+				reqInfo.requestNumber);
 
 		if (res.rc != STAFResult.Ok)
 			return res;
@@ -64,7 +68,23 @@ public class AddJobRequest extends AbstractStafRequest {
 
 		String algorithm = res.result;
 
-		Job newJob = new Job(jobName, algorithm);
+		res = STAFUtil.resolveRequestVar(parsedRequest
+				.optionValue("algorithmtype"), service.getStafHandle(),
+				reqInfo.requestNumber);
+
+		if (res.rc != STAFResult.Ok)
+			return res;
+
+		AlgorithmType algorithmType = AlgorithmType.valueOf(res.result
+				.toUpperCase());
+		
+		res = STAFUtil.resolveRequestVar(parsedRequest.optionValue("data"), service.getStafHandle(), reqInfo.requestNumber);
+		
+		String dataFilename = null;
+		if (res.rc == STAFResult.Ok)
+			dataFilename = res.result;
+
+		Job newJob = new Job(jobName, algorithm, algorithmType, dataFilename);
 		if (!service.addJob(newJob))
 			return new STAFResult(ADD_JOB_FAILED, "Failed to add job:["
 					+ jobName + "]");
@@ -76,6 +96,7 @@ public class AddJobRequest extends AbstractStafRequest {
 
 		return getRequestName()
 				+ " <Job name> ALGORITHM <Algorithm in the form of JAR/Binary/Command> "
+				+ "ALGORITHMTYPE <COMMAND | JAR | BINARY> "
 				+ "[DATA <Input Data to algorithm>]";
 	}
 

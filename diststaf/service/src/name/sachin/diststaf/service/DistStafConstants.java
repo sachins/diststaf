@@ -1,4 +1,4 @@
-package name.sachin.diststaf.service.wrapper;
+package name.sachin.diststaf.service;
 
 public interface DistStafConstants {
 
@@ -66,6 +66,12 @@ public interface DistStafConstants {
 	public enum ResourceType {
 		MACHINE
 	}
+	
+	public enum AlgorithmType {
+		COMMAND,
+		JAR,
+		FILE
+	}
 
 	public static final String FS_SRV_NAME = "fs";
 
@@ -80,21 +86,19 @@ public interface DistStafConstants {
 	public static final String DISTSTAF_SRV_NAME = "diststaf";
 	
 	public static final int JOB_DOESNT_EXIST = 4021;
-
 	public static final int RESOURCE_DOESNT_EXIST = 4020;
-
 	public static final int RESOURCE_ALREADY_ASSIGNED = 4022;
-
 	public static final int ASSIGN_RESOURCE_TO_JOB_FAILED = 4023;
 
-	public static final int DELETE_JOB_FAILED = 4003;
-	
-	public static final int RESOURCE_EXISTS = 4010;
 
+	public static final int RESOURCE_EXISTS = 4010;
 	public static final int ADD_RESOURCE_FAILED = 4011;
 	
 	public static final int EXECUTEJOB_FAILED = 4030;
 	
+	public static final int ALGORITHM_NOT_FILE = 4031;
+	
+	public static final int DELETE_JOB_FAILED = 4003;
 	public static final int ADD_JOB_FAILED = 4002;
 	public static final int JOB_EXISTS = 4001;
 	

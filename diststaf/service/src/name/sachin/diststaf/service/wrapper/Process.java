@@ -1,6 +1,6 @@
 package name.sachin.diststaf.service.wrapper;
 
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+import static name.sachin.diststaf.service.DistStafConstants.*;
 
 import java.util.HashMap;
 import java.util.Map;

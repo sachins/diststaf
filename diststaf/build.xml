@@ -15,6 +15,7 @@
 	<!-- set global properties for the service EDIT HERE -->
 	<property name="service.name" value="diststaf" />
 	<property name="service.class" value="name.sachin.diststaf.service.DistStafService" />
+	<property name="main.class" value="name.sachin.diststaf.Main" />
 	<!-- set global properties for the service DO NOT EDIT BELOW HERE -->
 	<property name="section.name" value="staf/service/info" />
 	<property name="src.dir" value="service/src" />
@@ -65,6 +66,7 @@
 		<jar jarfile="${service.name}.jar" update="false" basedir="." includes=".">
 			<fileset dir="${target.dir}" includes="STAF-INF/**" />
 			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
 				<section name="${section.name}">
 					<attribute name="Service-Class" value="${service.class}" />
 					<attribute name="Packaged-Jars" value="log4j-1.2.14" />
@@ -76,7 +78,13 @@
 				</section>
 			</manifest>
 		</jar>
+		<jar jarfile="sample.jar" update="false" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+			</manifest>
+		</jar>
 		<move file="${service.name}.jar" todir="${jar.dir}" />
+		<move file="sample.jar" todir="${jar.dir}" />
 	</target>
 
 	<target name="clean" description="clean up">

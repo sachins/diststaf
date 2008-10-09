@@ -1,6 +1,6 @@
 package name.sachin.diststaf.service.wrapper;
 
-import static name.sachin.diststaf.service.wrapper.DistStafConstants.*;
+import static name.sachin.diststaf.service.DistStafConstants.*;
 import name.sachin.diststaf.exception.DistStafException;
 
 import org.apache.log4j.Logger;
