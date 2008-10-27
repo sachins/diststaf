@@ -9,11 +9,14 @@ import org.apache.log4j.Logger;
 
 import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
+import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
 
 import name.sachin.diststaf.service.DistStafConstants.JobStatus;
 import name.sachin.diststaf.service.DistStafConstants.ResourceType;
 import name.sachin.diststaf.service.wrapper.FileSystem;
 import name.sachin.diststaf.service.wrapper.Process;
+import name.sachin.diststaf.service.wrapper.Var;
+import name.sachin.diststaf.service.wrapper.FileSystem.ChildrenOption;
 import static name.sachin.diststaf.service.DistStafConstants.*;
 
 public class Job {
@@ -77,41 +80,50 @@ public class Job {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List execute() throws STAFException {
+	public List execute(RequestInfo reqInfo) throws STAFException {
 		List resultList = new ArrayList();
+		Var var = new Var();
+		String thisHost = var.getSystemVar("STAF/Config/Machine");
+		String workDir = "{STAF/Env/TEMP}{STAF/Config/Sep/File}" + thisHost
+				+ "-" + name;
+		FileSystem fs = new FileSystem();
 		for (Resource r : resources) {
 			if (ResourceType.MACHINE == r.getType()) {
 				LOG.info("Algorithm is received for resource: " + r);
 				STAFHandle handle = new STAFHandle(r.getName());
-				Process proc = new Process(r.getName(), handle);
+				Process procResource = new Process(r.getName(), handle);
+				FileSystem fsResource = new FileSystem(r.getName(), handle);
 				if (AlgorithmType.JAR.compareTo(algorithmType) == 0) {
-					FileSystem fs = new FileSystem();
 					File f = new File(algorithm);
 					File data = null;
 					if (dataFilename != null)
 						data = new File(dataFilename);
-
-					LOG.info("File info:" + f.getAbsolutePath());
+					LOG.info("Algorithm File info:" + f.getAbsolutePath());
+					if (fsResource.dirExists(workDir)) {
+						fsResource.deleteEntry(workDir, null, true, true);
+					}
+					fsResource.createDirectory(workDir, true, true);
 					if (f.isFile()) {
 						fs.copyFileToMachineToDirectory(f.getAbsolutePath(), r
-								.getName(), "{STAF/Env/TEMP}");
+								.getName(), workDir);
 						if (data != null)
 							fs.copyFileToMachineToDirectory(data
-									.getAbsolutePath(), r.getName(),
-									"{STAF/Env/TEMP}");
-						Map resultMap = proc
-								.start("java -jar {STAF/Env/TEMP}{STAF/Config/Sep/File}"
+									.getAbsolutePath(), r.getName(), workDir);
+						String result = procResource.startInBackground(
+								"java -jar "
 										+ f.getName()
-										+ (data == null ? ""
-												: " {STAF/Env/TEMP}{STAF/Config/Sep/File}"
-														+ data.getName()));
-						resultList.add(resultMap);
+										+ (data == null ? "" : " "
+												+ data.getName()), workDir
+										+ "{STAF/Config/Sep/File}stdout.txt",
+								workDir + "{STAF/Config/Sep/File}stderr.txt",
+								workDir);
+						resultList.add(result);
 					} else {
 						throw new STAFException(ALGORITHM_NOT_FILE,
 								"Algorithm argument is not a file / doesn't exist.");
 					}
 				} else {
-					Map resultMap = proc.start(this.getAlgorithm());
+					Map resultMap = procResource.start(this.getAlgorithm());
 					resultList.add(resultMap);
 				}
 
