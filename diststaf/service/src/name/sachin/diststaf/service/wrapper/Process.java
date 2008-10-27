@@ -39,12 +39,35 @@ public class Process extends StafService {
 			String result = stafHandle.submit(stafHost, getServiceName(), req);
 			STAFMarshallingContext mc = STAFMarshallingContext
 					.unmarshall(result);
-			if(mc.getRootObject() instanceof String) {
+			if (mc.getRootObject() instanceof String) {
 				HashMap<String, String> resultMap = new HashMap<String, String>();
-				resultMap.put("result", (String)mc.getRootObject());
+				resultMap.put("result", (String) mc.getRootObject());
 				return resultMap;
 			}
 			return (Map) mc.getRootObject();
+		} catch (STAFException e) {
+			throw new DistStafException(e);
+		}
+	}
+
+	public String startInBackground(String command, String stdoutFile,
+			String stderrFile, String workDir) {
+		LOG.info(this + " - Sending request: start");
+		String req = "start shell command " + STAFUtil.wrapData(command);
+		if (workDir != null) {
+			req += " workdir " + STAFUtil.wrapData(workDir);
+		}
+		if (stdoutFile != null) {
+			req += " stdout " + STAFUtil.wrapData(stdoutFile);
+		}
+		if (stderrFile != null) {
+			req += " stderr " + STAFUtil.wrapData(stderrFile);
+		}
+
+		try {
+			LOG.info(this + " - Request generated: " + req);
+			String result = stafHandle.submit(stafHost, getServiceName(), req);
+			return result;
 		} catch (STAFException e) {
 			throw new DistStafException(e);
 		}

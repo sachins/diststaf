@@ -62,7 +62,7 @@ public class ExecuteJobRequest extends AbstractStafRequest {
 
 		List resultList;
 		try {
-			resultList = job.execute();
+			resultList = job.execute(reqInfo);
 		} catch (STAFException e) {
 			LOG.error("Failed to execute the job " + job, e);
 			return new STAFResult(EXECUTEJOB_FAILED, "Failed to execute Job "

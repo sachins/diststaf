@@ -10,7 +10,7 @@ import com.ibm.staf.STAFHandle;
 
 public class Var extends StafService {
 
-	private static Logger log = Logger.getLogger(Var.class);
+	private static Logger LOG = Logger.getLogger(Var.class);
 
 	public Var() {
 		super();
@@ -32,7 +32,7 @@ public class Var extends StafService {
 		}
 		req += " var " + varName;
 		try {
-			log.info(this + " - Sending request:" + req);
+			LOG.info(this + " - Sending request:" + req);
 			return stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 		} catch (STAFException se) {
 			throw new DistStafException(se);
@@ -51,7 +51,7 @@ public class Var extends StafService {
 		}
 		req += " var " + varName + "=" + varValue;
 		try {
-			log.info(this + " - Sending request:" + req);
+			LOG.info(this + " - Sending request:" + req);
 			stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 		} catch (STAFException se) {
 			throw new DistStafException(se);
@@ -66,7 +66,7 @@ public class Var extends StafService {
 		}
 		req += " var " + varName;
 		try {
-			log.info(this + " - Sending request:" + req);
+			LOG.info(this + " - Sending request:" + req);
 			stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 		} catch (STAFException se) {
 			throw new DistStafException(se);

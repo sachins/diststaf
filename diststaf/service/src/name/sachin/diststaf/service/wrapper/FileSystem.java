@@ -15,7 +15,7 @@ import com.ibm.staf.STAFUtil;
 
 public class FileSystem extends StafService {
 
-	private static Logger log = Logger.getLogger(FileSystem.class);
+	private static Logger LOG = Logger.getLogger(FileSystem.class);
 
 	public FileSystem() {
 		super();
@@ -56,7 +56,7 @@ public class FileSystem extends StafService {
 			req += " " + ldOption;
 		if (recurse)
 			req += " recurse";
-		log.info(this + " - Sending request:" + req);
+		LOG.info(this + " - Sending request:" + req);
 		try {
 			return stafHandle.submit(stafHost, FS_SRV_NAME, req);
 		} catch (STAFException se) {
@@ -91,13 +91,13 @@ public class FileSystem extends StafService {
 			req += " fullpath";
 		if (failIfExists)
 			req += " failifexists";
-		log.info(this + " - Sending request:" + req);
+		LOG.info(this + " - Sending request:" + req);
 		try {
 			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
 			if (rsp.length() > 0) {
 				throw new DistStafException(rsp);
 			}
-			log.info(this + " - Successfully created dir " + name);
+			LOG.info(this + " - Successfully created dir " + name);
 		} catch (STAFException se) {
 			throw new DistStafException(se);
 		}
@@ -114,13 +114,13 @@ public class FileSystem extends StafService {
 			req += " " + tfOption;
 		if (failIfOption != null)
 			req += " " + failIfOption;
-		log.info(this + " - Sending request:" + req);
+		LOG.info(this + " - Sending request:" + req);
 		try {
 			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
 			if (rsp.length() > 0) {
 				throw new DistStafException(rsp);
 			}
-			log.info(this + " - Successfully copied file " + fileName);
+			LOG.info(this + " - Successfully copied file " + fileName);
 		} catch (STAFException se) {
 			throw new DistStafException(se);
 		}
@@ -159,11 +159,12 @@ public class FileSystem extends StafService {
 
 	public boolean entryExists(String entryName, FileSystemEntryType entryType) {
 		try {
-			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, "get entry "
-					+ STAFUtil.wrapData(entryName) + " type");
+			String req = "get entry " + STAFUtil.wrapData(entryName) + " type";
+			LOG.info(this + " - Sending request: " + req);
+			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
 			return entryType.toString().equalsIgnoreCase(rsp);
 		} catch (STAFException se) {
-			throw new DistStafException(se);
+			return false;
 		}
 	}
 
@@ -178,11 +179,11 @@ public class FileSystem extends StafService {
 		if (ignoreErrors)
 			req += " ignoreerrors";
 		req += " confirm";
-		log.info(this + " - Sending request:" + req);
+		LOG.info(this + " - Sending request:" + req);
 
 		try {
 			String result = stafHandle.submit(stafHost, FS_SRV_NAME, req);
-			if (result.length() == 0) //successful scenario
+			if (result.length() == 0) // successful scenario
 				return null;
 			STAFMarshallingContext mc = STAFMarshallingContext
 					.unmarshall(result);

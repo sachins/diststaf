@@ -68,9 +68,9 @@ public class DistStafServiceTest {
 		// stafHandle.submit(distStafHost, "diststaf", "assignresourcetojob
 		// sachins-linux job testjob");
 		stafHandle.submit(distStafHost, "diststaf",
-				"addresource 192.168.2.6 type machine");
+				"addresource sachin.name type machine");
 		stafHandle.submit(distStafHost, "diststaf",
-				"assignresourcetojob 192.168.2.6 job testjob");
+				"assignresourcetojob sachin.name job testjob");
 		String result = stafHandle.submit(distStafHost, "diststaf",
 				"executejob testjob");
 		System.out.println("Result:" + result);
@@ -90,9 +90,9 @@ public class DistStafServiceTest {
 		stafHandle.submit(distStafHost, "diststaf",
 				"assignresourcetojob local job testjob");
 		stafHandle.submit(distStafHost, "diststaf",
-				"addresource sachins-linux type machine");
+				"addresource sachin.name type machine");
 		stafHandle.submit(distStafHost, "diststaf",
-				"assignresourcetojob sachins-linux job testjob");
+				"assignresourcetojob sachin.name job testjob");
 		String result = stafHandle.submit(distStafHost, "diststaf",
 				"executejob testjob");
 		System.out.println("Result:" + result);
