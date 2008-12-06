@@ -72,6 +72,18 @@ public interface DistStafConstants {
 		JAR,
 		FILE
 	}
+	
+	public enum TaskStatus {
+		RUNNING,
+		FAILED,
+		DONE
+	}
+	
+	public enum ResultStatus {
+		RECEIVED,
+		NOTRECEIVED,
+		PARTRECEIVED
+	}
 
 	public static final String FS_SRV_NAME = "fs";
 
@@ -83,12 +95,15 @@ public interface DistStafConstants {
 	
 	public static final String PROCESS_SRV_NAME = "process";
 	
+	public static final String QUEUE_SRV_NAME = "queue";
+	
 	public static final String DISTSTAF_SRV_NAME = "diststaf";
 	
 	public static final int JOB_DOESNT_EXIST = 4021;
 	public static final int RESOURCE_DOESNT_EXIST = 4020;
-	public static final int RESOURCE_ALREADY_ASSIGNED = 4022;
-	public static final int ASSIGN_RESOURCE_TO_JOB_FAILED = 4023;
+	public static final int TASK_ALREADY_ASSIGNED = 4022;
+	public static final int ADD_TASK_FAILED = 4023;
+	public static final int TASK_DOESNT_EXIST = 4024;
 
 
 	public static final int RESOURCE_EXISTS = 4010;
@@ -110,6 +125,10 @@ public interface DistStafConstants {
 	
 	public static final int ADDJOB_TRUST_LEVEL = 3;
 	
+	public static final int ADDTASK_TRUST_LEVEL = 3;
+	
 	public static final int EXECUTEJOB_TRUST_LEVEL = 3;
+
+	public static final int LIST_TRUST_LEVEL = 1;
 
 }

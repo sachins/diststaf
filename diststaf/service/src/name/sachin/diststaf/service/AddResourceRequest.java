@@ -12,14 +12,14 @@ import name.sachin.diststaf.obj.Resource;
 import static name.sachin.diststaf.service.DistStafConstants.*;
 
 public class AddResourceRequest extends AbstractStafRequest {
-	
-	private static final Logger LOG = Logger.getLogger(AddResourceRequest.class);
-	
+
+	private static final Logger LOG = Logger
+			.getLogger(AddResourceRequest.class);
+
 	public AddResourceRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;
 		initParser();
 	}
-	
 
 	@Override
 	protected String getRequestName() {
@@ -29,9 +29,9 @@ public class AddResourceRequest extends AbstractStafRequest {
 	@Override
 	public STAFResult handle(RequestInfo reqInfo) {
 		LOG.debug("Received request: " + reqInfo.request);
-		STAFResult trustResult = STAFUtil.validateTrust(ADDRESOURCE_TRUST_LEVEL,
-				service.getServiceName(), getRequestName(), service
-						.getLocalMachineName(), reqInfo);
+		STAFResult trustResult = STAFUtil.validateTrust(
+				ADDRESOURCE_TRUST_LEVEL, service.getServiceName(),
+				getRequestName(), service.getLocalMachineName(), reqInfo);
 		LOG.debug("Trust result:[" + trustResult.rc + "," + trustResult.result
 				+ "]");
 		if (trustResult.rc != STAFResult.Ok)
@@ -40,36 +40,38 @@ public class AddResourceRequest extends AbstractStafRequest {
 
 		STAFResult res;
 
-		res = STAFUtil.resolveRequestVar(parsedRequest.optionValue(getRequestName()),
-				service.getStafHandle(), reqInfo.requestNumber);
+		res = STAFUtil.resolveRequestVar(parsedRequest
+				.optionValue(getRequestName()), service.getStafHandle(),
+				reqInfo.requestNumber);
 
 		if (res.rc != STAFResult.Ok)
 			return res;
-		
+
 		String resName = res.result;
-		
-		res = STAFUtil.resolveRequestVar(parsedRequest.optionValue("type"),
-				service.getStafHandle(), reqInfo.requestNumber);
-		ResourceType type = ResourceType.valueOf(res.result.toUpperCase());
-		
-		if(service.resourceNameExists(resName, type)) {
-			return new STAFResult(RESOURCE_EXISTS, "Resource with name:[" + resName
-					+ "] and type:[" + type + "] already exists");
+
+		// res = STAFUtil.resolveRequestVar(parsedRequest.optionValue("type"),
+		// service.getStafHandle(), reqInfo.requestNumber);
+		// ResourceType type = ResourceType.valueOf(res.result.toUpperCase());
+
+		ResourceType type = ResourceType.MACHINE;
+
+		if (service.resourceNameExists(resName, type)) {
+			return new STAFResult(RESOURCE_EXISTS, "Resource with name:["
+					+ resName + "] and type:[" + type + "] already exists");
 		}
 		if (res.rc != STAFResult.Ok)
 			return res;
-		
+
 		Resource newResource = new Resource(resName, type);
 		if (!service.addResource(newResource))
-			return new STAFResult(ADD_RESOURCE_FAILED, "Failed to add resource:["
-					+ resName + "]");
+			return new STAFResult(ADD_RESOURCE_FAILED,
+					"Failed to add resource:[" + resName + "]");
 		return new STAFResult(STAFResult.Ok);
 	}
 
 	@Override
 	protected String helpString() {
-		return getRequestName()
-		+ " <Resource name> TYPE <Types MACHINE>";
+		return getRequestName() + " <Resource name>";
 	}
 
 	@Override

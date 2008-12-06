@@ -46,6 +46,7 @@ public class Process extends StafService {
 			}
 			return (Map) mc.getRootObject();
 		} catch (STAFException e) {
+			LOG.error("STAFException Received", e);
 			throw new DistStafException(e);
 		}
 	}
@@ -69,6 +70,54 @@ public class Process extends StafService {
 			String result = stafHandle.submit(stafHost, getServiceName(), req);
 			return result;
 		} catch (STAFException e) {
+			LOG.error("STAFException Received", e);
+			throw new DistStafException(e);
+		}
+	}
+
+	// Compatible with STAF v2 and v3
+	@SuppressWarnings("unchecked")
+	public boolean isComplete(String handleId) {
+		try {
+			LOG.info(this + " - Checking STAF verison on " + stafHost);
+			String stafVersion = stafHandle.submit(stafHost, "misc", "version");
+			LOG.debug(this + " - STAF Version found:" + stafVersion);
+			String processInfo = stafHandle.submit(stafHost, getServiceName(),
+					"query handle " + handleId);
+			LOG.debug("Process info:" + processInfo);
+			if (stafVersion.startsWith("2.")) {
+				String rcString = "RC        :";
+				int rcIndexStart = processInfo.indexOf(rcString)
+						+ rcString.length();
+				LOG.debug("rcIndexStart:" + rcIndexStart);
+				int rcIndexEnd = processInfo.indexOf('\n', rcIndexStart);
+				LOG.debug("rcIndexEnd:" + rcIndexEnd);
+				if (rcIndexStart == rcIndexEnd) {
+					return false;
+				}
+				String rc = processInfo.substring(rcIndexStart, rcIndexEnd);
+				LOG.debug("Result code got:" + rc);
+				try {
+					Integer.parseInt(rc.trim());
+					return true;
+				} catch (NumberFormatException e) {
+					return false;
+				}
+			} else if (stafVersion.startsWith("3.")) {
+				STAFMarshallingContext mc = STAFMarshallingContext
+						.unmarshall(processInfo);
+				Map<String, String> pInfo = (Map<String, String>) mc
+						.getRootObject();
+				if (pInfo.get("rc").equals("<None>")) {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				throw new DistStafException("Unknown STAF Version");
+			}
+		} catch (STAFException e) {
+			LOG.error("STAFException Received", e);
 			throw new DistStafException(e);
 		}
 	}

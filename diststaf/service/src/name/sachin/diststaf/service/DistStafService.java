@@ -1,5 +1,6 @@
 package name.sachin.diststaf.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -30,7 +31,13 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 
 	private String localMachineName = "";
 
-	private String lineSep;
+	public static String LINE_SEP;
+
+	public static String FILE_SEP;
+	
+	public static String SERVICE_DATA_DIR;
+	
+	public static boolean STOP_THREADS = false;
 
 	private List<Job> jobs;
 
@@ -88,11 +95,11 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 	}
 
 	private STAFResult handleHelp(RequestInfo reqInfo) {
-		String help = "DISTSTAF Service Help" + lineSep;
+		String help = "DISTSTAF Service Help" + LINE_SEP;
 		for (AbstractStafRequest eachReqHandler : requestHandlers) {
-			help += eachReqHandler.helpString() + lineSep;
+			help += eachReqHandler.helpString() + LINE_SEP;
 		}
-		help += "HELP" + lineSep;
+		help += "HELP" + LINE_SEP;
 		return new STAFResult(STAFResult.Ok, help);
 	}
 
@@ -101,7 +108,7 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 			return jobs.add(job);
 		}
 	}
-	
+
 	protected boolean addResource(Resource resource) {
 		synchronized (resources) {
 			return resources.add(resource);
@@ -123,20 +130,21 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 	protected boolean jobNameExists(String jobName) {
 		return findJob(jobName) != null;
 	}
-	
+
 	protected boolean resourceNameExists(String resName, ResourceType type) {
 		return findResource(resName, type) != null;
 	}
 
 	protected Resource findResource(String resName, ResourceType type) {
 		for (Resource eachResource : resources) {
-			if (eachResource.getName().equalsIgnoreCase(resName) && eachResource.getType() == type) {
+			if (eachResource.getName().equalsIgnoreCase(resName)
+					&& eachResource.getType() == type) {
 				return eachResource;
 			}
 		}
 		return null;
 	}
-	
+
 	protected Resource findResource(String resName) {
 		for (Resource eachResource : resources) {
 			if (eachResource.getName().equalsIgnoreCase(resName)) {
@@ -163,6 +171,7 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 			return new STAFResult(STAFResult.STAFRegistrationError, e
 					.toString());
 		}
+
 		jobs = new ArrayList<Job>();
 		resources = new ArrayList<Resource>();
 
@@ -176,7 +185,14 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		if (res.rc != STAFResult.Ok)
 			return res;
 
-		lineSep = res.result;
+		LINE_SEP = res.result;
+
+		res = STAFUtil.resolveInitVar("{STAF/Config/Sep/File}", stafHandle);
+
+		if (res.rc != STAFResult.Ok)
+			return res;
+
+		FILE_SEP = res.result;
 
 		// Resolve the machine name variable for the local machine
 
@@ -187,6 +203,15 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 
 		localMachineName = res.result;
 
+		SERVICE_DATA_DIR = initInfo.writeLocation + FILE_SEP + "service" + FILE_SEP
+				+ serviceName.toLowerCase();
+
+		File dir = new File(SERVICE_DATA_DIR);
+
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+
 		return new STAFResult(STAFResult.Ok);
 	}
 
@@ -194,9 +219,9 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		requestHandlers = new ArrayList<AbstractStafRequest>();
 		requestHandlers.add(new AddJobRequest(this));
 		requestHandlers.add(new AddResourceRequest(this));
+		requestHandlers.add(new AddTaskRequest(this));
 		requestHandlers.add(new ListRequest(this));
 		requestHandlers.add(new DeleteJobRequest(this));
-		requestHandlers.add(new AssignResourceToJobRequest(this));
 		requestHandlers.add(new ExecuteJobRequest(this));
 	}
 
@@ -215,8 +240,14 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 	 * @see com.ibm.staf.service.STAFServiceInterfaceLevel30#term()
 	 */
 	public STAFResult term() {
-		// TODO Auto-generated method stub
-		return new STAFResult();
+		try {
+			STOP_THREADS = true;
+			stafHandle.unRegister();
+		} catch (STAFException ex) {
+			return new STAFResult(STAFResult.STAFRegistrationError, ex
+					.toString());
+		}
+		return new STAFResult(STAFResult.Ok);
 	}
 
 	protected boolean removeJob(String jobName) {

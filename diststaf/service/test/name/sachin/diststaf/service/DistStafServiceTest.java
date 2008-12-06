@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
-import com.ibm.staf.STAFResult;
 
 public class DistStafServiceTest {
 

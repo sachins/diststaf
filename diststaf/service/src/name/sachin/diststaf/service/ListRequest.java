@@ -21,17 +21,14 @@ public class ListRequest extends AbstractStafRequest {
 
 	private static final Logger LOG = Logger.getLogger(ListRequest.class);
 
-	private static final int LIST_TRUST_LEVEL = 1;
-
 	private static STAFMapClassDefinition listJobMapClass;
 
 	static {
 		listJobMapClass = new STAFMapClassDefinition(
 				"STAF/Service/DistStaf/ListJob");
 		listJobMapClass.addKey("name", "Name");
-		listJobMapClass.addKey("algorithm", "Algorithm");
 		listJobMapClass.addKey("status", "Status");
-		listJobMapClass.addKey("resources", "Resources");
+		listJobMapClass.addKey("tasks", "Tasks");
 	}
 
 	private static STAFMapClassDefinition listResourceMapClass;
@@ -52,7 +49,7 @@ public class ListRequest extends AbstractStafRequest {
 	@Override
 	public STAFResult handle(RequestInfo reqInfo) {
 		LOG.debug("Received request: " + reqInfo.request);
-		STAFResult trustResult = STAFUtil.validateTrust(LIST_TRUST_LEVEL,
+		STAFResult trustResult = STAFUtil.validateTrust(DistStafConstants.LIST_TRUST_LEVEL,
 				service.getServiceName(), getRequestName(),
 				service.getLocalMachineName(), reqInfo);
 		LOG.debug("Trust result:[" + trustResult.rc + "," + trustResult.result
@@ -101,9 +98,8 @@ public class ListRequest extends AbstractStafRequest {
 		for (Job eachJob : service.getJobList()) {
 			Map resultMap = listJobMapClass.createInstance();
 			resultMap.put("name", eachJob.getName());
-			resultMap.put("algorithm", eachJob.getAlgorithm());
 			resultMap.put("status", eachJob.getStatus());
-			resultMap.put("resources", eachJob.getResources());
+			resultMap.put("tasks", eachJob.getTasks());
 			resultList.add(resultMap);
 		}
 		mc.setRootObject(resultList);
@@ -112,12 +108,12 @@ public class ListRequest extends AbstractStafRequest {
 
 	@Override
 	protected void initParser() {
-		LOG.debug("Initializing AddJobRequest Parser");
+		LOG.debug("Initializing ListRequest Parser");
 		parser = new STAFCommandParser();
 		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUENOTALLOWED);
 		parser.addOption("JOBS", 1, STAFCommandParser.VALUENOTALLOWED);
 		parser.addOption("RESOURCES", 1, STAFCommandParser.VALUENOTALLOWED);
-		LOG.debug("Initialized AddJobRequest Parser Successfully");
+		LOG.debug("Initialized ListRequest Parser Successfully");
 	}
 
 	@Override

@@ -1,12 +1,10 @@
 package name.sachin.diststaf.service;
 
-import java.util.List;
-
+import name.sachin.diststaf.obj.AtomicTask;
 import name.sachin.diststaf.obj.Job;
 
 import org.apache.log4j.Logger;
 
-import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFResult;
 import com.ibm.staf.STAFUtil;
 import com.ibm.staf.service.STAFCommandParseResult;
@@ -23,7 +21,7 @@ public class ExecuteJobRequest extends AbstractStafRequest {
 		this.service = distStafSrv;
 		initParser();
 	}
-	
+
 	@Override
 	protected String getRequestName() {
 		return "executejob";
@@ -60,20 +58,31 @@ public class ExecuteJobRequest extends AbstractStafRequest {
 					+ "] doesn't exist");
 		}
 
-		List resultList;
-		try {
-			resultList = job.execute(reqInfo);
-		} catch (STAFException e) {
-			LOG.error("Failed to execute the job " + job, e);
-			return new STAFResult(EXECUTEJOB_FAILED, "Failed to execute Job "
-					+ job);
+		res = STAFUtil.resolveRequestVar(parsedRequest.optionValue("taskname"),
+				service.getStafHandle(), reqInfo.requestNumber);
+
+		String taskName = null;
+		AtomicTask task = null;
+		if (res.rc == STAFResult.Ok && !"".equals(res.result)) {
+			taskName = res.result;
+			LOG.info("Task name resolved:" + taskName);
+			task = job.findTask(taskName);
+			if (task == null) {
+				return new STAFResult(TASK_DOESNT_EXIST, "Task with name:["
+						+ taskName + "] doesn't exist");
+			}
 		}
-		return new STAFResult(STAFResult.Ok, resultList.toString());
+
+		if (task != null) {
+			return task.execute(reqInfo, service.getStafHandle(), jobName);
+		}
+		String result = job.execute(reqInfo, service.getStafHandle()).toString();
+		return new STAFResult(STAFResult.Ok, result);
 	}
 
 	@Override
 	protected String helpString() {
-		return "EXECUTEJOB <Existing Job Name>";
+		return "EXECUTEJOB <Existing Job Name> [TASKNAME <Existing Task Name in the Job>]";
 	}
 
 	@Override
@@ -81,6 +90,7 @@ public class ExecuteJobRequest extends AbstractStafRequest {
 		LOG.debug("Initializing ExecuteJobRequest Parser");
 		parser = new STAFCommandParser();
 		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUEREQUIRED);
+		parser.addOption("taskname", 1, STAFCommandParser.VALUEREQUIRED);
 		LOG.debug("Initialized ExecuteJobRequest Parser Successfully");
 
 	}

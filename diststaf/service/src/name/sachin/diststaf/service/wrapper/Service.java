@@ -40,6 +40,7 @@ public class Service extends StafService {
 					.unmarshall(result);
 			return (List<Map>) mc.getRootObject();
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -58,6 +59,7 @@ public class Service extends StafService {
 			}
 			LOG.info(this + " - Successfully Added service " + srvName);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -72,6 +74,7 @@ public class Service extends StafService {
 			}
 			LOG.info(this + " - Successfully Removed service " + srvName);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}

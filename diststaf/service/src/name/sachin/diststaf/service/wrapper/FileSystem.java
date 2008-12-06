@@ -33,6 +33,7 @@ public class FileSystem extends StafService {
 		try {
 			return stafHandle.submit(stafHost, FS_SRV_NAME, "list settings");
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -60,6 +61,7 @@ public class FileSystem extends StafService {
 		try {
 			return stafHandle.submit(stafHost, FS_SRV_NAME, req);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -99,6 +101,7 @@ public class FileSystem extends StafService {
 			}
 			LOG.info(this + " - Successfully created dir " + name);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -122,6 +125,7 @@ public class FileSystem extends StafService {
 			}
 			LOG.info(this + " - Successfully copied file " + fileName);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -149,6 +153,30 @@ public class FileSystem extends StafService {
 				null);
 	}
 
+	public void copyDirectory(String dirName, String toDirectory,
+			String toMachine, boolean recurse) {
+		String req = "copy directory " + STAFUtil.wrapData(dirName);
+		if (toDirectory != null)
+			req += " todirectory " + toDirectory;
+		if (toMachine != null)
+			req += " tomachine " + toMachine;
+		if (recurse)
+			req += " recurse";
+		LOG.info(this + " - Sending request:" + req);
+		try {
+			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
+			if (rsp.length() > 0) {
+				LOG.error("Failed to copy directory:" + rsp);
+				throw new DistStafException(rsp);
+			}
+			LOG.info(this + " - Successfully copied direcotry " + dirName);
+		} catch (STAFException se) {
+			LOG.error("STAFException received", se);
+			throw new DistStafException(se);
+		}
+
+	}
+
 	public boolean fileExists(String fileName) {
 		return entryExists(fileName, FileSystemEntryType.FILE);
 	}
@@ -164,6 +192,7 @@ public class FileSystem extends StafService {
 			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
 			return entryType.toString().equalsIgnoreCase(rsp);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			return false;
 		}
 	}
@@ -194,6 +223,7 @@ public class FileSystem extends StafService {
 				return null;
 			}
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}

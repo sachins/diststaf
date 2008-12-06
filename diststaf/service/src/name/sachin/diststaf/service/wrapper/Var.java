@@ -35,6 +35,7 @@ public class Var extends StafService {
 			LOG.info(this + " - Sending request:" + req);
 			return stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -54,6 +55,7 @@ public class Var extends StafService {
 			LOG.info(this + " - Sending request:" + req);
 			stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
@@ -69,6 +71,7 @@ public class Var extends StafService {
 			LOG.info(this + " - Sending request:" + req);
 			stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 		} catch (STAFException se) {
+			LOG.error("STAFException Received", se);
 			throw new DistStafException(se);
 		}
 	}
