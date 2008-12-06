@@ -9,7 +9,6 @@ public class Resource {
 	private ResourceType type;
 	
 	public Resource(String name, ResourceType type) {
-		super();
 		this.name = name;
 		this.type = type;
 	}
