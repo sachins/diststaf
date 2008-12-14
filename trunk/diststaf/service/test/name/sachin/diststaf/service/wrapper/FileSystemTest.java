@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
 
 public class FileSystemTest {
@@ -38,7 +39,7 @@ public class FileSystemTest {
 	}
 
 	@Test
-	public void listSettings() {
+	public void listSettings() throws STAFException {
 		String rsp = fsLocal.listSettings();
 		assertTrue(rsp.contains("Disabled"));
 		rsp = fsSachin.listSettings();
@@ -46,7 +47,7 @@ public class FileSystemTest {
 	}
 
 	@Test
-	public void listDirectory() {
+	public void listDirectory() throws STAFException {
 		List result = fsLocal.listDirectory("/");
 		assertTrue(result.contains("WINDOWS"));
 		result = fsSachin.listDirectory("/");
@@ -54,7 +55,7 @@ public class FileSystemTest {
 	}
 
 	@Test
-	public void listDirectoryWithLong() {
+	public void listDirectoryWithLong() throws STAFException {
 		List<Map> result = fsLocal
 				.listDirectoryWithLong("{STAF/Config/STAFRoot}");
 		assertTrue(result.size() >= 12);
@@ -73,7 +74,7 @@ public class FileSystemTest {
 	}
 
 	@Test
-	public void createDirectory() {
+	public void createDirectory() throws STAFException {
 		try {
 			File f = new File("c:/tmp/staf");
 			f.delete();
@@ -91,7 +92,7 @@ public class FileSystemTest {
 	}
 
 	@Test
-	public void copyFile() {
+	public void copyFile() throws STAFException {
 		Var varLocal = new Var();
 		File f = new File(varLocal.getSystemVar("STAF/Env/TEMP")
 				+ varLocal.getSystemVar("STAF/Config/Sep/File") + "STAF.cfg");
@@ -99,12 +100,9 @@ public class FileSystemTest {
 		fsLocal.copyFileToDirectory("{STAF/Config/ConfigFile}",
 				"{STAF/Env/TEMP}");
 		assertTrue(f.exists());
-		try {
-			fsSachin.deleteEntry(
-					"{STAF/Env/SystemDrive}{STAF/Config/Sep/File}test.cfg",
-					null, true, true);
-		} catch (DistStafException dse) {
-		}
+		fsSachin.deleteEntry(
+				"{STAF/Env/SystemDrive}{STAF/Config/Sep/File}test.cfg", null,
+				true, true);
 		fsLocal.copyFileToMachineWithName("{STAF/Config/ConfigFile}",
 				"sachin.name",
 				"{STAF/Env/SystemDrive}{STAF/Config/Sep/File}test.cfg");

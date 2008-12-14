@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import name.sachin.diststaf.obj.Resource;
+import name.sachin.diststaf.obj.Node;
 import name.sachin.diststaf.obj.Job;
 
 import org.apache.log4j.Logger;
@@ -31,13 +31,13 @@ public class ListRequest extends AbstractStafRequest {
 		listJobMapClass.addKey("tasks", "Tasks");
 	}
 
-	private static STAFMapClassDefinition listResourceMapClass;
+	private static STAFMapClassDefinition listNodeMapClass;
 
 	static {
-		listResourceMapClass = new STAFMapClassDefinition(
-				"STAF/Service/DistStaf/ListResource");
-		listResourceMapClass.addKey("name", "Name");
-		listResourceMapClass.addKey("type", "Type");
+		listNodeMapClass = new STAFMapClassDefinition(
+				"STAF/Service/DistStaf/ListNode");
+		listNodeMapClass.addKey("name", "Name");
+		listNodeMapClass.addKey("type", "Type");
 	}
 
 	public ListRequest(DistStafService distStafSrv) {
@@ -58,7 +58,7 @@ public class ListRequest extends AbstractStafRequest {
 			return trustResult;
 		STAFCommandParseResult parsedRequest = parser.parse(reqInfo.request);
 		int jobsOption = parsedRequest.optionTimes("jobs");
-		int resourcesOption = parsedRequest.optionTimes("resources");
+		int nodesOption = parsedRequest.optionTimes("nodes");
 
 		STAFMarshallingContext mc = new STAFMarshallingContext();
 
@@ -70,8 +70,8 @@ public class ListRequest extends AbstractStafRequest {
 
 		if (jobsOption > 0) {
 			return processListJob(mc, resultList);
-		} else if (resourcesOption > 0) {
-			return processListResource(mc, resultList);
+		} else if (nodesOption > 0) {
+			return processListNode(mc, resultList);
 		} else {
 			return new STAFResult(STAFResult.InvalidRequestString);
 		}
@@ -79,13 +79,13 @@ public class ListRequest extends AbstractStafRequest {
 	}
 
 	@SuppressWarnings("unchecked")
-	private STAFResult processListResource(STAFMarshallingContext mc,
+	private STAFResult processListNode(STAFMarshallingContext mc,
 			List resultList) {
-		mc.setMapClassDefinition(listResourceMapClass);
-		for (Resource eachResource : service.getResourceList()) {
-			Map resultMap = listResourceMapClass.createInstance();
-			resultMap.put("name", eachResource.getName());
-			resultMap.put("type", eachResource.getType());
+		mc.setMapClassDefinition(listNodeMapClass);
+		for (Node eachNode : service.getNodeList()) {
+			Map resultMap = listNodeMapClass.createInstance();
+			resultMap.put("name", eachNode.getName());
+			resultMap.put("type", eachNode.getType());
 			resultList.add(resultMap);
 		}
 		mc.setRootObject(resultList);
@@ -112,7 +112,7 @@ public class ListRequest extends AbstractStafRequest {
 		parser = new STAFCommandParser();
 		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUENOTALLOWED);
 		parser.addOption("JOBS", 1, STAFCommandParser.VALUENOTALLOWED);
-		parser.addOption("RESOURCES", 1, STAFCommandParser.VALUENOTALLOWED);
+		parser.addOption("NODES", 1, STAFCommandParser.VALUENOTALLOWED);
 		LOG.debug("Initialized ListRequest Parser Successfully");
 	}
 
@@ -123,7 +123,7 @@ public class ListRequest extends AbstractStafRequest {
 
 	@Override
 	protected String helpString() {
-		return "LIST JOBS | RESOURCES";
+		return "LIST JOBS | NODES";
 	}
 
 }

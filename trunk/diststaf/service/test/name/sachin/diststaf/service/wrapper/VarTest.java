@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
 
 public class VarTest {
@@ -34,7 +35,7 @@ public class VarTest {
 	}
 
 	@Test
-	public void testSetGetDeleteVar() {
+	public void testSetGetDeleteVar() throws STAFException {
 		String var = "mysharedvar";
 		String value = "mysharedvalue";
 		srvLocal.setVar(VarPoolType.SHARED, var, value);
@@ -43,7 +44,7 @@ public class VarTest {
 	}
 
 	@Test
-	public void testGetSystemVar() {
+	public void testGetSystemVar() throws STAFException {
 		String var = "STAF/Config/Sep/Path";
 		assertEquals(";", srvLocal.getSystemVar(var));
 	}

@@ -22,7 +22,7 @@ public class Process extends StafService {
 		super(stafHost, stafHandle);
 	}
 
-	public Process() throws DistStafException {
+	public Process() throws STAFException {
 		super();
 	}
 
@@ -31,28 +31,22 @@ public class Process extends StafService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map start(String command) {
-		try {
-			LOG.info(this + " - Sending request: start");
-			String req = "start shell command " + STAFUtil.wrapData(command);
-			req += " wait stderrtostdout returnstdout";
-			String result = stafHandle.submit(stafHost, getServiceName(), req);
-			STAFMarshallingContext mc = STAFMarshallingContext
-					.unmarshall(result);
-			if (mc.getRootObject() instanceof String) {
-				HashMap<String, String> resultMap = new HashMap<String, String>();
-				resultMap.put("result", (String) mc.getRootObject());
-				return resultMap;
-			}
-			return (Map) mc.getRootObject();
-		} catch (STAFException e) {
-			LOG.error("STAFException Received", e);
-			throw new DistStafException(e);
+	public Map start(String command) throws STAFException {
+		LOG.info(this + " - Sending request: start");
+		String req = "start shell command " + STAFUtil.wrapData(command);
+		req += " wait stderrtostdout returnstdout";
+		String result = stafHandle.submit(stafHost, getServiceName(), req);
+		STAFMarshallingContext mc = STAFMarshallingContext.unmarshall(result);
+		if (mc.getRootObject() instanceof String) {
+			HashMap<String, String> resultMap = new HashMap<String, String>();
+			resultMap.put("result", (String) mc.getRootObject());
+			return resultMap;
 		}
+		return (Map) mc.getRootObject();
 	}
 
 	public String startInBackground(String command, String stdoutFile,
-			String stderrFile, String workDir) {
+			String stderrFile, String workDir) throws STAFException {
 		LOG.info(this + " - Sending request: start");
 		String req = "start shell command " + STAFUtil.wrapData(command);
 		if (workDir != null) {
@@ -65,60 +59,50 @@ public class Process extends StafService {
 			req += " stderr " + STAFUtil.wrapData(stderrFile);
 		}
 
-		try {
-			LOG.info(this + " - Request generated: " + req);
-			String result = stafHandle.submit(stafHost, getServiceName(), req);
-			return result;
-		} catch (STAFException e) {
-			LOG.error("STAFException Received", e);
-			throw new DistStafException(e);
-		}
+		LOG.info(this + " - Request generated: " + req);
+		String result = stafHandle.submit(stafHost, getServiceName(), req);
+		return result;
 	}
 
 	// Compatible with STAF v2 and v3
 	@SuppressWarnings("unchecked")
-	public boolean isComplete(String handleId) {
-		try {
-			LOG.info(this + " - Checking STAF verison on " + stafHost);
-			String stafVersion = stafHandle.submit(stafHost, "misc", "version");
-			LOG.debug(this + " - STAF Version found:" + stafVersion);
-			String processInfo = stafHandle.submit(stafHost, getServiceName(),
-					"query handle " + handleId);
-			LOG.debug("Process info:" + processInfo);
-			if (stafVersion.startsWith("2.")) {
-				String rcString = "RC        :";
-				int rcIndexStart = processInfo.indexOf(rcString)
-						+ rcString.length();
-				LOG.debug("rcIndexStart:" + rcIndexStart);
-				int rcIndexEnd = processInfo.indexOf('\n', rcIndexStart);
-				LOG.debug("rcIndexEnd:" + rcIndexEnd);
-				if (rcIndexStart == rcIndexEnd) {
-					return false;
-				}
-				String rc = processInfo.substring(rcIndexStart, rcIndexEnd);
-				LOG.debug("Result code got:" + rc);
-				try {
-					Integer.parseInt(rc.trim());
-					return true;
-				} catch (NumberFormatException e) {
-					return false;
-				}
-			} else if (stafVersion.startsWith("3.")) {
-				STAFMarshallingContext mc = STAFMarshallingContext
-						.unmarshall(processInfo);
-				Map<String, String> pInfo = (Map<String, String>) mc
-						.getRootObject();
-				if (pInfo.get("rc").equals("<None>")) {
-					return false;
-				} else {
-					return true;
-				}
-			} else {
-				throw new DistStafException("Unknown STAF Version");
+	public boolean isComplete(String handleId) throws STAFException {
+		LOG.info(this + " - Checking STAF verison on " + stafHost);
+		String stafVersion = stafHandle.submit(stafHost, "misc", "version");
+		LOG.debug(this + " - STAF Version found:" + stafVersion);
+		String processInfo = stafHandle.submit(stafHost, getServiceName(),
+				"query handle " + handleId);
+		LOG.debug("Process info:" + processInfo);
+		if (stafVersion.startsWith("2.")) {
+			String rcString = "RC        :";
+			int rcIndexStart = processInfo.indexOf(rcString)
+					+ rcString.length();
+			LOG.debug("rcIndexStart:" + rcIndexStart);
+			int rcIndexEnd = processInfo.indexOf('\n', rcIndexStart);
+			LOG.debug("rcIndexEnd:" + rcIndexEnd);
+			if (rcIndexStart == rcIndexEnd) {
+				return false;
 			}
-		} catch (STAFException e) {
-			LOG.error("STAFException Received", e);
-			throw new DistStafException(e);
+			String rc = processInfo.substring(rcIndexStart, rcIndexEnd);
+			LOG.debug("Result code got:" + rc);
+			try {
+				Integer.parseInt(rc.trim());
+				return true;
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		} else if (stafVersion.startsWith("3.")) {
+			STAFMarshallingContext mc = STAFMarshallingContext
+					.unmarshall(processInfo);
+			Map<String, String> pInfo = (Map<String, String>) mc
+					.getRootObject();
+			if (pInfo.get("rc").equals("<None>")) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			throw new DistStafException("Unknown STAF Version");
 		}
 	}
 

@@ -12,7 +12,7 @@ public class Var extends StafService {
 
 	private static Logger LOG = Logger.getLogger(Var.class);
 
-	public Var() {
+	public Var() throws STAFException {
 		super();
 	}
 
@@ -25,55 +25,40 @@ public class Var extends StafService {
 	}
 
 	public String getVar(VarPoolType poolType, String varName)
-			throws DistStafException {
+			throws STAFException {
 		String req = "get";
 		if (poolType != null) {
 			req += " " + poolType;
 		}
 		req += " var " + varName;
-		try {
-			LOG.info(this + " - Sending request:" + req);
-			return stafHandle.submit(stafHost, VAR_SRV_NAME, req);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
-		}
+		LOG.info(this + " - Sending request:" + req);
+		return stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 	}
 
-	public String getSystemVar(String varName) {
+	public String getSystemVar(String varName) throws STAFException {
 		return getVar(VarPoolType.SYSTEM, varName);
 	}
 
 	public void setVar(VarPoolType poolType, String varName, String varValue)
-			throws DistStafException {
+			throws STAFException {
 		String req = "set";
 		if (poolType != null) {
 			req += " " + poolType;
 		}
 		req += " var " + varName + "=" + varValue;
-		try {
-			LOG.info(this + " - Sending request:" + req);
-			stafHandle.submit(stafHost, VAR_SRV_NAME, req);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
-		}
+		LOG.info(this + " - Sending request:" + req);
+		stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 	}
 
 	public void deleteVar(VarPoolType poolType, String varName)
-			throws DistStafException {
+			throws STAFException {
 		String req = "delete";
 		if (poolType != null) {
 			req += " " + poolType;
 		}
 		req += " var " + varName;
-		try {
-			LOG.info(this + " - Sending request:" + req);
-			stafHandle.submit(stafHost, VAR_SRV_NAME, req);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
-		}
+		LOG.info(this + " - Sending request:" + req);
+		stafHandle.submit(stafHost, VAR_SRV_NAME, req);
 	}
 
 	@Override

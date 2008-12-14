@@ -8,29 +8,29 @@ import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
 
-import name.sachin.diststaf.obj.Resource;
+import name.sachin.diststaf.obj.Node;
 import static name.sachin.diststaf.service.DistStafConstants.*;
 
-public class AddResourceRequest extends AbstractStafRequest {
+public class AddNodeRequest extends AbstractStafRequest {
 
 	private static final Logger LOG = Logger
-			.getLogger(AddResourceRequest.class);
+			.getLogger(AddNodeRequest.class);
 
-	public AddResourceRequest(DistStafService distStafSrv) {
+	public AddNodeRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;
 		initParser();
 	}
 
 	@Override
 	protected String getRequestName() {
-		return "ADDRESOURCE";
+		return "ADDNODE";
 	}
 
 	@Override
 	public STAFResult handle(RequestInfo reqInfo) {
 		LOG.debug("Received request: " + reqInfo.request);
 		STAFResult trustResult = STAFUtil.validateTrust(
-				ADDRESOURCE_TRUST_LEVEL, service.getServiceName(),
+				ADDNODE_TRUST_LEVEL, service.getServiceName(),
 				getRequestName(), service.getLocalMachineName(), reqInfo);
 		LOG.debug("Trust result:[" + trustResult.rc + "," + trustResult.result
 				+ "]");
@@ -47,40 +47,40 @@ public class AddResourceRequest extends AbstractStafRequest {
 		if (res.rc != STAFResult.Ok)
 			return res;
 
-		String resName = res.result;
+		String nodeName = res.result;
 
 		// res = STAFUtil.resolveRequestVar(parsedRequest.optionValue("type"),
 		// service.getStafHandle(), reqInfo.requestNumber);
-		// ResourceType type = ResourceType.valueOf(res.result.toUpperCase());
+		// NodeType type = NodeType.valueOf(res.result.toUpperCase());
 
-		ResourceType type = ResourceType.MACHINE;
+		NodeType type = NodeType.MACHINE;
 
-		if (service.resourceNameExists(resName, type)) {
-			return new STAFResult(RESOURCE_EXISTS, "Resource with name:["
-					+ resName + "] and type:[" + type + "] already exists");
+		if (service.nodeNameExists(nodeName, type)) {
+			return new STAFResult(NODE_EXISTS, "Node with name:["
+					+ nodeName + "] and type:[" + type + "] already exists");
 		}
 		if (res.rc != STAFResult.Ok)
 			return res;
 
-		Resource newResource = new Resource(resName, type);
-		if (!service.addResource(newResource))
-			return new STAFResult(ADD_RESOURCE_FAILED,
-					"Failed to add resource:[" + resName + "]");
+		Node newNode = new Node(nodeName, type);
+		if (!service.addNode(newNode))
+			return new STAFResult(ADD_NODE_FAILED,
+					"Failed to add node:[" + nodeName + "]");
 		return new STAFResult(STAFResult.Ok);
 	}
 
 	@Override
 	protected String helpString() {
-		return getRequestName() + " <Resource name>";
+		return getRequestName() + " <Node name>";
 	}
 
 	@Override
 	protected void initParser() {
-		LOG.debug("Initializing AddResourceRequest Parser");
+		LOG.debug("Initializing AddNodeRequest Parser");
 		parser = new STAFCommandParser();
 		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("TYPE", 1, STAFCommandParser.VALUEREQUIRED);
-		LOG.debug("Initialized AddResourceRequest Parser Successfully");
+		LOG.debug("Initialized AddNodeRequest Parser Successfully");
 	}
 
 }

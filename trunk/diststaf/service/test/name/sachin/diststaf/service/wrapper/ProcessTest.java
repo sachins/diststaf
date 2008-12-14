@@ -30,12 +30,12 @@ public class ProcessTest {
 
 	@After
 	public void tearDown() throws Exception {
-		//stafHandle.unRegister();
+		// stafHandle.unRegister();
 		procLocal = null;
 	}
 
 	@Test
-	public void start() {
+	public void start() throws STAFException {
 		Map resultMap = procLocal.start("java -version");
 		assertEquals("0", resultMap.get("rc"));
 		List<Map> fileList = (List<Map>) resultMap.get("fileList");

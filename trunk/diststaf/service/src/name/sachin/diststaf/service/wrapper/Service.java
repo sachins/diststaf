@@ -22,7 +22,7 @@ public class Service extends StafService {
 		super(stafHost, stafHandle);
 	}
 
-	public Service() throws DistStafException {
+	public Service() throws STAFException {
 		super();
 	}
 
@@ -31,52 +31,36 @@ public class Service extends StafService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Map> list() throws DistStafException {
-		try {
-			LOG.info(this + " - Sending request: list");
-			String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME,
-					"list");
-			STAFMarshallingContext mc = STAFMarshallingContext
-					.unmarshall(result);
-			return (List<Map>) mc.getRootObject();
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
-		}
+	public List<Map> list() throws STAFException {
+		LOG.info(this + " - Sending request: list");
+		String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME, "list");
+		STAFMarshallingContext mc = STAFMarshallingContext.unmarshall(result);
+		return (List<Map>) mc.getRootObject();
 	}
 
-	public void add(String srvName, ServiceLibraryType library, File execute) {
-		try {
-			LOG.info(this + " - Sending request: add");
-			String req = "add service " + srvName;
-			if (library != null)
-				req += " library " + library;
-			if (execute != null)
-				req += " execute " + execute.getAbsolutePath();
-			String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME, req);
-			if (result.length() > 0) {
-				throw new DistStafException(result);
-			}
-			LOG.info(this + " - Successfully Added service " + srvName);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
+	public void add(String srvName, ServiceLibraryType library, File execute)
+			throws STAFException {
+		LOG.info(this + " - Sending request: add");
+		String req = "add service " + srvName;
+		if (library != null)
+			req += " library " + library;
+		if (execute != null)
+			req += " execute " + execute.getAbsolutePath();
+		String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME, req);
+		if (result.length() > 0) {
+			throw new DistStafException(result);
 		}
+		LOG.info(this + " - Successfully Added service " + srvName);
 	}
 
-	public void remove(String srvName) {
-		try {
-			LOG.info(this + " - Sending request: remove");
-			String req = "remove service " + srvName;
-			String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME, req);
-			if (result.length() > 0) {
-				throw new DistStafException(result);
-			}
-			LOG.info(this + " - Successfully Removed service " + srvName);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
+	public void remove(String srvName) throws STAFException {
+		LOG.info(this + " - Sending request: remove");
+		String req = "remove service " + srvName;
+		String result = stafHandle.submit(stafHost, SERVICE_SRV_NAME, req);
+		if (result.length() > 0) {
+			throw new DistStafException(result);
 		}
+		LOG.info(this + " - Successfully Removed service " + srvName);
 	}
 
 	@Override
