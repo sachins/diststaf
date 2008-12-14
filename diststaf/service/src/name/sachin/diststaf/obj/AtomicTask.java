@@ -6,7 +6,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
-import name.sachin.diststaf.service.DistStafConstants.AlgorithmType;
+import name.sachin.diststaf.service.DistStafConstants.ProgramType;
 import name.sachin.diststaf.service.DistStafConstants.NodeType;
 import name.sachin.diststaf.service.wrapper.FileSystem;
 import name.sachin.diststaf.service.wrapper.Process;
@@ -27,9 +27,9 @@ public class AtomicTask {
 
 	private Node node;
 
-	private String algorithm;
+	private String program;
 
-	private AlgorithmType algorithmType;
+	private ProgramType programType;
 
 	private String dataFilename; // Optional
 
@@ -43,11 +43,11 @@ public class AtomicTask {
 
 	private long endTime;
 
-	public AtomicTask(String name, Node node, String algorithm,
-			AlgorithmType algorithmType, String dataFilename, String arguments) {
+	public AtomicTask(String name, Node node, String program,
+			ProgramType programType, String dataFilename, String arguments) {
 		this.name = name;
-		this.algorithm = algorithm;
-		this.algorithmType = algorithmType;
+		this.program = program;
+		this.programType = programType;
 		this.dataFilename = dataFilename;
 		this.arguments = arguments;
 		this.node = node;
@@ -56,7 +56,7 @@ public class AtomicTask {
 	@Override
 	public String toString() {
 		return "[AtomicTask name:" + name + ",node:" + node
-				+ ",algorithm:" + algorithm + ",algorithmType:" + algorithmType
+				+ ",program:" + program + ",programType:" + programType
 				+ ",dataFilename:" + dataFilename + ",arguments:" + arguments
 				+ ",status:" + status + ",resultStatus:" + resultStatus + "]";
 	}
@@ -72,14 +72,14 @@ public class AtomicTask {
 		FileSystem fsNode = new FileSystem(node.getName(), handle);
 		this.startTime = System.currentTimeMillis();
 		if (NodeType.MACHINE == node.getType()) {
-			LOG.info("Algorithm is received for node: " + node);
+			LOG.info("Program is received for node: " + node);
 
-			if (AlgorithmType.JAR.compareTo(algorithmType) == 0) {
-				File f = new File(algorithm);
+			if (ProgramType.JAR.compareTo(programType) == 0) {
+				File f = new File(program);
 				File data = null;
 				if (dataFilename != null)
 					data = new File(dataFilename);
-				LOG.info("Algorithm File info:" + f.getAbsolutePath());
+				LOG.info("Program File info:" + f.getAbsolutePath());
 				if (fsNode.dirExists(workDir)) {
 					try {
 						fsNode.deleteEntry(workDir, null, true, true);
@@ -120,12 +120,12 @@ public class AtomicTask {
 						return new STAFResult(e.rc, e.getLocalizedMessage());
 					}
 				} else {
-					return new STAFResult(ALGORITHM_NOT_FILE,
-							"Algorithm is not a file for task:" + this);
+					return new STAFResult(PROGRAM_NOT_FILE,
+							"Program is not a file for task:" + this);
 				}
 			} else {
 				try {
-					result = procNode.startInBackground(algorithm
+					result = procNode.startInBackground(program
 							+ (arguments == null ? "" : " " + arguments),
 							workDir + "{STAF/Config/Sep/File}stdout.txt",
 							workDir + "{STAF/Config/Sep/File}stderr.txt",
@@ -159,20 +159,20 @@ public class AtomicTask {
 		this.node = node;
 	}
 
-	public String getAlgorithm() {
-		return algorithm;
+	public String getProgram() {
+		return program;
 	}
 
-	public void setAlgorithm(String algorithm) {
-		this.algorithm = algorithm;
+	public void setProgram(String program) {
+		this.program = program;
 	}
 
-	public AlgorithmType getAlgorithmType() {
-		return algorithmType;
+	public ProgramType getProgramType() {
+		return programType;
 	}
 
-	public void setAlgorithmType(AlgorithmType algorithmType) {
-		this.algorithmType = algorithmType;
+	public void setProgramType(ProgramType programType) {
+		this.programType = programType;
 	}
 
 	public String getDataFilename() {

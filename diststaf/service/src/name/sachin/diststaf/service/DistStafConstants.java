@@ -67,7 +67,7 @@ public interface DistStafConstants {
 		MACHINE
 	}
 	
-	public enum AlgorithmType {
+	public enum ProgramType {
 		COMMAND,
 		JAR,
 		FILE
@@ -111,7 +111,7 @@ public interface DistStafConstants {
 	
 	public static final int EXECUTEJOB_FAILED = 4030;
 	
-	public static final int ALGORITHM_NOT_FILE = 4031;
+	public static final int PROGRAM_NOT_FILE = 4031;
 	
 	public static final int DELETE_JOB_FAILED = 4003;
 	public static final int ADD_JOB_FAILED = 4002;

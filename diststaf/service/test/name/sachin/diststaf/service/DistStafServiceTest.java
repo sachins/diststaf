@@ -36,7 +36,7 @@ public class DistStafServiceTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		srvLocal.remove("diststaf");
+		// srvLocal.remove("diststaf");
 	}
 
 	@Before
@@ -56,20 +56,13 @@ public class DistStafServiceTest {
 	}
 
 	public void testExecute() throws STAFException {
-		stafHandle.submit(distStafHost, "diststaf",
-				"addjob testjob algorithm dir");
-		// stafHandle.submit(distStafHost, "diststaf", "addnode local type
-		// machine");
-		// stafHandle.submit(distStafHost, "diststaf", "assignnodetojob
-		// local job testjob");
-		// stafHandle.submit(distStafHost, "diststaf", "addnode
-		// sachins-linux type machine");
-		// stafHandle.submit(distStafHost, "diststaf", "assignnodetojob
-		// sachins-linux job testjob");
-		stafHandle.submit(distStafHost, "diststaf",
-				"addnode sachin.name type machine");
-		stafHandle.submit(distStafHost, "diststaf",
-				"assignnodetojob sachin.name job testjob");
+		stafHandle.submit(distStafHost, "diststaf", "addjob testjob");
+		stafHandle.submit(distStafHost, "diststaf", "addnode sachin.name");
+		stafHandle
+				.submit(
+						distStafHost,
+						"diststaf",
+						"addtask task1 jobname testjob nodename sachin.name program dir programtype COMMAND");
 		String result = stafHandle.submit(distStafHost, "diststaf",
 				"executejob testjob");
 		System.out.println("Result:" + result);
@@ -79,19 +72,19 @@ public class DistStafServiceTest {
 
 	@Test
 	public void testExecuteJar() throws STAFException {
+		stafHandle.submit(distStafHost, "diststaf", "addjob testjob");
+		stafHandle.submit(distStafHost, "diststaf", "addnode local");
 		stafHandle
 				.submit(
 						distStafHost,
 						"diststaf",
-						"addjob testjob algorithm \"C:/Documents and Settings/sachins/workspace/diststaf/target/jar/sample.jar\" algorithmtype jar data \"C:/Documents and Settings/sachins/workspace/diststaf/service/sampledata.txt\"");
-		stafHandle.submit(distStafHost, "diststaf",
-				"addnode local type machine");
-		stafHandle.submit(distStafHost, "diststaf",
-				"assignnodetojob local job testjob");
-		stafHandle.submit(distStafHost, "diststaf",
-				"addnode sachin.name type machine");
-		stafHandle.submit(distStafHost, "diststaf",
-				"assignnodetojob sachin.name job testjob");
+						"addtask task1 jobname testjob nodename local program \"C:/Documents and Settings/sachins/workspace/diststaf/target/jar/primenum.jar\" programtype jar arguments \"10000000 20000000\"");
+		//stafHandle.submit(distStafHost, "diststaf", "addnode sachin.name");
+		stafHandle
+				.submit(
+						distStafHost,
+						"diststaf",
+						"addtask task2 jobname testjob nodename local program \"C:/Documents and Settings/sachins/workspace/diststaf/target/jar/primenum.jar\" programtype jar arguments \"20000000 30000000\"");
 		String result = stafHandle.submit(distStafHost, "diststaf",
 				"executejob testjob");
 		System.out.println("Result:" + result);

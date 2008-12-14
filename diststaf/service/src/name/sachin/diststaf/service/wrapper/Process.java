@@ -94,11 +94,15 @@ public class Process extends StafService {
 		} else if (stafVersion.startsWith("3.")) {
 			STAFMarshallingContext mc = STAFMarshallingContext
 					.unmarshall(processInfo);
+			LOG.debug("Masrhalling Context:" + mc);
 			Map<String, String> pInfo = (Map<String, String>) mc
 					.getRootObject();
-			if (pInfo.get("rc").equals("<None>")) {
+			LOG.debug("Process Info map:" + pInfo);
+			if (pInfo.get("rc") == null) {
+				LOG.debug("Process is not complete yet.");
 				return false;
 			} else {
+				LOG.debug("Process is not complete yet.");
 				return true;
 			}
 		} else {
