@@ -222,6 +222,7 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		requestHandlers.add(new AddTaskRequest(this));
 		requestHandlers.add(new ListRequest(this));
 		requestHandlers.add(new DeleteJobRequest(this));
+		requestHandlers.add(new DeleteNodeRequest(this));
 		requestHandlers.add(new ExecuteJobRequest(this));
 		requestHandlers.add(new JobStatsRequest(this));
 	}
@@ -253,6 +254,11 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 
 	protected boolean removeJob(String jobName) {
 		return getJobList().remove(findJob(jobName));
+	}
+
+	protected boolean removeNode(String nodeName) {
+		
+		return getNodeList().remove(findNode(nodeName));
 	}
 
 }
