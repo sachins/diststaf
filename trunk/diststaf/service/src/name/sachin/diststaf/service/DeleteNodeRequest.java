@@ -1,5 +1,7 @@
 package name.sachin.diststaf.service;
 
+import static name.sachin.diststaf.service.DistStafConstants.*;
+
 import org.apache.log4j.Logger;
 
 import com.ibm.staf.STAFResult;
@@ -8,21 +10,24 @@ import com.ibm.staf.service.STAFCommandParseResult;
 import com.ibm.staf.service.STAFCommandParser;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
 
-import static name.sachin.diststaf.service.DistStafConstants.*;
-
-public class DeleteJobRequest extends AbstractStafRequest {
-
-	private static final Logger LOG = Logger.getLogger(DeleteJobRequest.class);
-
-	public DeleteJobRequest(DistStafService distStafSrv) {
+public class DeleteNodeRequest extends AbstractStafRequest {
+	
+	private static final Logger LOG = Logger.getLogger(DeleteNodeRequest.class);
+	
+	public DeleteNodeRequest(DistStafService distStafSrv) {
 		this.service = distStafSrv;
 		initParser();
 	}
 
 	@Override
+	protected String getRequestName() {
+		return "DELETENODE";
+	}
+
+	@Override
 	public STAFResult handle(RequestInfo reqInfo) {
 		LOG.debug("Received request: " + reqInfo.request);
-		STAFResult trustResult = STAFUtil.validateTrust(DELETE_JOB_TRUST_LEVEL,
+		STAFResult trustResult = STAFUtil.validateTrust(DELETE_NODE_TRUST_LEVEL,
 				service.getServiceName(), getRequestName(), service
 						.getLocalMachineName(), reqInfo);
 		LOG.debug("Trust result:[" + trustResult.rc + "," + trustResult.result
@@ -41,28 +46,23 @@ public class DeleteJobRequest extends AbstractStafRequest {
 		if (res.rc != STAFResult.Ok)
 			return res;
 
-		String jobName = res.result;
+		String nodeName = res.result;
 
-		return service.removeJob(jobName) ? new STAFResult(STAFResult.Ok)
-				: new STAFResult(DELETE_JOB_FAILED, "Failed to delete job");
-	}
-
-	@Override
-	protected void initParser() {
-		LOG.debug("Initializing DeleteJobRequest Parser");
-		parser = new STAFCommandParser();
-		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUEREQUIRED);
-		LOG.debug("Initialized DeleteJobRequest Parser Successfully");
-	}
-
-	@Override
-	protected String getRequestName() {
-		return "DELETEJOB";
+		return service.removeNode(nodeName) ? new STAFResult(STAFResult.Ok)
+				: new STAFResult(DELETE_NODE_FAILED, "Failed to delete node");
 	}
 
 	@Override
 	protected String helpString() {
-		return getRequestName() + " <Job name>";
+		return getRequestName() + " <Node name>";
+	}
+
+	@Override
+	protected void initParser() {
+		LOG.debug("Initializing DeleteNodeRequest Parser");
+		parser = new STAFCommandParser();
+		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUEREQUIRED);
+		LOG.debug("Initialized DeleteNodeRequest Parser Successfully");
 	}
 
 }

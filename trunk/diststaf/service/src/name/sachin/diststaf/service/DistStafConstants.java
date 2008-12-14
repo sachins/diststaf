@@ -113,13 +113,14 @@ public interface DistStafConstants {
 	
 	public static final int PROGRAM_NOT_FILE = 4031;
 	
+	public static final int DELETE_NODE_FAILED = 4004;
 	public static final int DELETE_JOB_FAILED = 4003;
 	public static final int ADD_JOB_FAILED = 4002;
 	public static final int JOB_EXISTS = 4001;
 	
 	public static final int DELETE_JOB_TRUST_LEVEL = 3;
 	
-	public static final int ASSIGNNODETOJOB_TRUST_LEVEL = 3;
+	public static final int DELETE_NODE_TRUST_LEVEL = 3;
 	
 	public static final int ADDNODE_TRUST_LEVEL = 3;
 	
