@@ -61,7 +61,7 @@ public class DistStafServiceLoadTest {
 	// This is a load unit test for IO Bound program.
 	@Test
 	public void testIOBoundProgram() throws STAFException {
-		File algorithm = new File("target/jar/randomdata.jar");
+		File program = new File("target/jar/randomdata.jar");
 		stafHandle.submit(distStafHost, "diststaf", "addjob testjob");
 		int totalNodes = 1;
 		int concurrentRequests = 1;
@@ -80,10 +80,10 @@ public class DistStafServiceLoadTest {
 										+ taskname
 										+ " jobname testjob nodename "
 										+ nodes[r]
-										+ " algorithm "
-										+ STAFUtil.wrapData(algorithm
+										+ " program "
+										+ STAFUtil.wrapData(program
 												.getAbsolutePath())
-										+ " algorithmtype JAR arguments \"random.dat 1048576 5\"");
+										+ " programtype JAR arguments \"random.dat 1048576 5\"");
 			}
 		}
 		String result = stafHandle.submit(distStafHost, "diststaf",
@@ -95,7 +95,7 @@ public class DistStafServiceLoadTest {
 	//@Test
 	public void testCPUBoundProgram() throws STAFException {
 
-		File algorithm = new File("target/jar/primenum.jar");
+		File program = new File("target/jar/primenum.jar");
 		stafHandle.submit(distStafHost, "diststaf", "addjob testjob");
 
 		int totalNodes = 1;
@@ -127,9 +127,9 @@ public class DistStafServiceLoadTest {
 				String arguments = startNum + " " + taskEndNum;
 				stafHandle.submit(distStafHost, "diststaf", "addtask "
 						+ taskname + " jobname testjob nodename "
-						+ nodes[r] + " algorithm "
-						+ STAFUtil.wrapData(algorithm.getAbsolutePath())
-						+ " algorithmtype JAR arguments \"" + arguments + "\"");
+						+ nodes[r] + " program "
+						+ STAFUtil.wrapData(program.getAbsolutePath())
+						+ " programtype JAR arguments \"" + arguments + "\"");
 				startNum = taskEndNum.add(BigInteger.ONE);
 			}
 		}
