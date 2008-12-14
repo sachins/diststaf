@@ -17,7 +17,7 @@ public class FileSystem extends StafService {
 
 	private static Logger LOG = Logger.getLogger(FileSystem.class);
 
-	public FileSystem() {
+	public FileSystem() throws STAFException {
 		super();
 	}
 
@@ -29,19 +29,14 @@ public class FileSystem extends StafService {
 		super(stafHandle);
 	}
 
-	public String listSettings() throws DistStafException {
-		try {
-			return stafHandle.submit(stafHost, FS_SRV_NAME, "list settings");
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
-		}
+	public String listSettings() throws STAFException {
+		return stafHandle.submit(stafHost, FS_SRV_NAME, "list settings");
 	}
 
 	public String listDirectory(String dirName, String namePattern,
 			String extPattern, FileSystemEntryType type, SortOrder sort,
 			CaseManner caseManner, LongDetailOption ldOption, boolean recurse)
-			throws DistStafException {
+			throws STAFException {
 		String req = "list directory " + STAFUtil.wrapData(dirName);
 		if (namePattern != null)
 			req += " name " + namePattern;
@@ -58,28 +53,23 @@ public class FileSystem extends StafService {
 		if (recurse)
 			req += " recurse";
 		LOG.info(this + " - Sending request:" + req);
-		try {
-			return stafHandle.submit(stafHost, FS_SRV_NAME, req);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
-		}
+		return stafHandle.submit(stafHost, FS_SRV_NAME, req);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Map> listDirectoryWithLong(String dirName)
-			throws DistStafException {
+	public List<Map> listDirectoryWithLong(String dirName) throws STAFException {
 		String result = listDirectory(dirName, null, null, null, null, null,
 				LongDetailOption.L, false);
 		STAFMarshallingContext mc = STAFMarshallingContext.unmarshall(result,
 				STAFMarshallingContext.IGNORE_INDIRECT_OBJECTS);
 		if (mc.hasMapClassDefinition("STAF/Service/FS/ListLongInfo")) {
 			return (List<Map>) mc.getRootObject();
-		} else
+		} else {
 			throw new DistStafException("Response doesn't contain map");
+		}
 	}
 
-	public List listDirectory(String dirName) throws DistStafException {
+	public List listDirectory(String dirName) throws STAFException {
 		String result = listDirectory(dirName, null, null, null, null, null,
 				null, false);
 		STAFMarshallingContext mc = STAFMarshallingContext.unmarshall(result);
@@ -87,27 +77,23 @@ public class FileSystem extends StafService {
 	}
 
 	public void createDirectory(String name, boolean fullpath,
-			boolean failIfExists) {
+			boolean failIfExists) throws STAFException {
 		String req = "create directory " + STAFUtil.wrapData(name);
 		if (fullpath)
 			req += " fullpath";
 		if (failIfExists)
 			req += " failifexists";
 		LOG.info(this + " - Sending request:" + req);
-		try {
-			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
-			if (rsp.length() > 0) {
-				throw new DistStafException(rsp);
-			}
-			LOG.info(this + " - Successfully created dir " + name);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
+		String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
+		if (rsp.length() > 0) {
+			throw new DistStafException(rsp);
 		}
+		LOG.info(this + " - Successfully created dir " + name);
 	}
 
 	public void copyFile(String fileName, ToFileDirectoryOption toOption,
-			String toMachine, TextFormatOption tfOption, FailIfFile failIfOption) {
+			String toMachine, TextFormatOption tfOption, FailIfFile failIfOption)
+			throws STAFException {
 		String req = "copy file " + STAFUtil.wrapData(fileName);
 		if (toOption != null)
 			req += " " + toOption;
@@ -118,43 +104,40 @@ public class FileSystem extends StafService {
 		if (failIfOption != null)
 			req += " " + failIfOption;
 		LOG.info(this + " - Sending request:" + req);
-		try {
-			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
-			if (rsp.length() > 0) {
-				throw new DistStafException(rsp);
-			}
-			LOG.info(this + " - Successfully copied file " + fileName);
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
+		String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
+		if (rsp.length() > 0) {
+			throw new DistStafException(rsp);
 		}
+		LOG.info(this + " - Successfully copied file " + fileName);
 	}
 
-	public void copyFileToFile(String srcFileName, String targetFileName) {
+	public void copyFileToFile(String srcFileName, String targetFileName)
+			throws STAFException {
 		copyFile(srcFileName, new ToFileDirectoryOption(DestinationType.TOFILE,
 				targetFileName), null, null, null);
 	}
 
 	public void copyFileToMachineWithName(String srcFileName, String toMachine,
-			String targetFileName) {
+			String targetFileName) throws STAFException {
 		copyFile(srcFileName, new ToFileDirectoryOption(DestinationType.TOFILE,
 				targetFileName), toMachine, null, null);
 	}
 
-	public void copyFileToDirectory(String srcFileName, String targetDirName) {
+	public void copyFileToDirectory(String srcFileName, String targetDirName)
+			throws STAFException {
 		copyFile(srcFileName, new ToFileDirectoryOption(
 				DestinationType.TODIRECTORY, targetDirName), null, null, null);
 	}
 
 	public void copyFileToMachineToDirectory(String srcFileName,
-			String toMachine, String targetDirName) {
+			String toMachine, String targetDirName) throws STAFException {
 		copyFile(srcFileName, new ToFileDirectoryOption(
 				DestinationType.TODIRECTORY, targetDirName), toMachine, null,
 				null);
 	}
 
 	public void copyDirectory(String dirName, String toDirectory,
-			String toMachine, boolean recurse) {
+			String toMachine, boolean recurse) throws STAFException {
 		String req = "copy directory " + STAFUtil.wrapData(dirName);
 		if (toDirectory != null)
 			req += " todirectory " + toDirectory;
@@ -163,17 +146,12 @@ public class FileSystem extends StafService {
 		if (recurse)
 			req += " recurse";
 		LOG.info(this + " - Sending request:" + req);
-		try {
-			String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
-			if (rsp.length() > 0) {
-				LOG.error("Failed to copy directory:" + rsp);
-				throw new DistStafException(rsp);
-			}
-			LOG.info(this + " - Successfully copied direcotry " + dirName);
-		} catch (STAFException se) {
-			LOG.error("STAFException received", se);
-			throw new DistStafException(se);
+		String rsp = stafHandle.submit(stafHost, FS_SRV_NAME, req);
+		if (rsp.length() > 0) {
+			LOG.error("Failed to copy directory:" + rsp);
+			throw new DistStafException(rsp);
 		}
+		LOG.info(this + " - Successfully copied direcotry " + dirName);
 
 	}
 
@@ -199,7 +177,8 @@ public class FileSystem extends StafService {
 
 	@SuppressWarnings("unchecked")
 	public List<Map> deleteEntry(String entryName,
-			ChildrenOption childrenOption, boolean recurse, boolean ignoreErrors) {
+			ChildrenOption childrenOption, boolean recurse, boolean ignoreErrors)
+			throws STAFException {
 		String req = "delete entry " + STAFUtil.wrapData(entryName);
 		if (childrenOption != null)
 			req += childrenOption;
@@ -210,21 +189,15 @@ public class FileSystem extends StafService {
 		req += " confirm";
 		LOG.info(this + " - Sending request:" + req);
 
-		try {
-			String result = stafHandle.submit(stafHost, FS_SRV_NAME, req);
-			if (result.length() == 0) // successful scenario
-				return null;
-			STAFMarshallingContext mc = STAFMarshallingContext
-					.unmarshall(result);
-			if (mc.hasMapClassDefinition("STAF/Service/FS/ErrorInfo")) {
-				// this can be partial or no success scenario
-				return (List<Map>) mc.getRootObject();
-			} else {
-				return null;
-			}
-		} catch (STAFException se) {
-			LOG.error("STAFException Received", se);
-			throw new DistStafException(se);
+		String result = stafHandle.submit(stafHost, FS_SRV_NAME, req);
+		if (result.length() == 0) // successful scenario
+			return null;
+		STAFMarshallingContext mc = STAFMarshallingContext.unmarshall(result);
+		if (mc.hasMapClassDefinition("STAF/Service/FS/ErrorInfo")) {
+			// this can be partial or no success scenario
+			return (List<Map>) mc.getRootObject();
+		} else {
+			return null;
 		}
 	}
 

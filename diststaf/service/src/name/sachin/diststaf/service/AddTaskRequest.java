@@ -4,7 +4,7 @@ import static name.sachin.diststaf.service.DistStafConstants.*;
 
 import name.sachin.diststaf.obj.AtomicTask;
 import name.sachin.diststaf.obj.Job;
-import name.sachin.diststaf.obj.Resource;
+import name.sachin.diststaf.obj.Node;
 import name.sachin.diststaf.service.DistStafConstants.AlgorithmType;
 
 import org.apache.log4j.Logger;
@@ -70,19 +70,19 @@ public class AddTaskRequest extends AbstractStafRequest {
 					+ "] already assigned to Job:[" + jobName + "]");
 		}
 
-		// Resolve resource name
+		// Resolve node name
 		res = STAFUtil.resolveRequestVar(parsedRequest
-				.optionValue("resourcename"), service.getStafHandle(),
+				.optionValue("nodename"), service.getStafHandle(),
 				reqInfo.requestNumber);
 		if (res.rc != STAFResult.Ok)
 			return res;
-		String resourceName = res.result;
+		String nodeName = res.result;
 
-		// Make sure resource with given name exists
-		Resource resource = service.findResource(resourceName);
-		if (resource == null) {
-			return new STAFResult(RESOURCE_DOESNT_EXIST, "Resource with name:["
-					+ resourceName + "] doesn't exist");
+		// Make sure node with given name exists
+		Node node = service.findNode(nodeName);
+		if (node == null) {
+			return new STAFResult(NODE_DOESNT_EXIST, "Node with name:["
+					+ nodeName + "] doesn't exist");
 		}
 
 		// Resolve algorithm name
@@ -126,7 +126,7 @@ public class AddTaskRequest extends AbstractStafRequest {
 		}
 
 		// Create atomic task instance and add it to the job
-		AtomicTask task = new AtomicTask(taskName, resource, algorithm,
+		AtomicTask task = new AtomicTask(taskName, node, algorithm,
 				algorithmType, dataFilename, arguments);
 
 		if (!job.addTask(task)) {
@@ -140,7 +140,7 @@ public class AddTaskRequest extends AbstractStafRequest {
 	@Override
 	protected String helpString() {
 		return getRequestName()
-				+ " <Task name> JOBNAME <Job name> RESOURCENAME <Resource name> "
+				+ " <Task name> JOBNAME <Job name> NODENAME <Node name> "
 				+ "ALGORITHM <Algorithm in the form of JAR/Command> "
 				+ "ALGORITHMTYPE <COMMAND | JAR> "
 				+ "[DATA <Input Data for algorithm>] "
@@ -153,13 +153,13 @@ public class AddTaskRequest extends AbstractStafRequest {
 		parser = new STAFCommandParser();
 		parser.addOption(getRequestName(), 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("JOBNAME", 1, STAFCommandParser.VALUEREQUIRED);
-		parser.addOption("RESOURCENAME", 1, STAFCommandParser.VALUEREQUIRED);
+		parser.addOption("NODENAME", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("ALGORITHM", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("ALGORITHMTYPE", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("DATA", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOption("ARGUMENTS", 1, STAFCommandParser.VALUEREQUIRED);
 		parser.addOptionNeed(getRequestName(), "JOBNAME");
-		parser.addOptionNeed(getRequestName(), "RESOURCENAME");
+		parser.addOptionNeed(getRequestName(), "NODENAME");
 		parser.addOptionNeed(getRequestName(), "ALGORITHM");
 		parser.addOptionNeed(getRequestName(), "ALGORITHMTYPE");
 		LOG.debug("Initialized AddTaskRequest Parser Successfully");

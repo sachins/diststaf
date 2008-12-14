@@ -19,6 +19,10 @@ public class Job {
 	private JobStatus status;
 
 	private List<AtomicTask> tasks;
+	
+	private long startTime;
+	
+	private long endTime;
 
 	public Job(String name) {
 		this.name = name;
@@ -42,6 +46,7 @@ public class Job {
 	public List execute(RequestInfo reqInfo, STAFHandle handle) {
 		LOG.debug("Executing " + this);
 		List resultList = new ArrayList();
+		startTime = System.currentTimeMillis();
 		for (AtomicTask t : tasks) {
 			LOG.debug("Sending execute command to " + t);
 			STAFResult response = t.execute(reqInfo, handle, name);

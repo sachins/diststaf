@@ -7,9 +7,9 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
-import name.sachin.diststaf.obj.Resource;
+import name.sachin.diststaf.obj.Node;
 import name.sachin.diststaf.obj.Job;
-import name.sachin.diststaf.service.DistStafConstants.ResourceType;
+import name.sachin.diststaf.service.DistStafConstants.NodeType;
 
 import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
@@ -41,7 +41,7 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 
 	private List<Job> jobs;
 
-	private List<Resource> resources;
+	private List<Node> nodes;
 
 	private List<AbstractStafRequest> requestHandlers;
 
@@ -109,9 +109,9 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		}
 	}
 
-	protected boolean addResource(Resource resource) {
-		synchronized (resources) {
-			return resources.add(resource);
+	protected boolean addNode(Node node) {
+		synchronized (nodes) {
+			return nodes.add(node);
 		}
 	}
 
@@ -121,9 +121,9 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		}
 	}
 
-	protected List<Resource> getResourceList() {
-		synchronized (resources) {
-			return resources;
+	protected List<Node> getNodeList() {
+		synchronized (nodes) {
+			return nodes;
 		}
 	}
 
@@ -131,24 +131,24 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		return findJob(jobName) != null;
 	}
 
-	protected boolean resourceNameExists(String resName, ResourceType type) {
-		return findResource(resName, type) != null;
+	protected boolean nodeNameExists(String nodeName, NodeType type) {
+		return findNode(nodeName, type) != null;
 	}
 
-	protected Resource findResource(String resName, ResourceType type) {
-		for (Resource eachResource : resources) {
-			if (eachResource.getName().equalsIgnoreCase(resName)
-					&& eachResource.getType() == type) {
-				return eachResource;
+	protected Node findNode(String nodeName, NodeType type) {
+		for (Node eachNode : nodes) {
+			if (eachNode.getName().equalsIgnoreCase(nodeName)
+					&& eachNode.getType() == type) {
+				return eachNode;
 			}
 		}
 		return null;
 	}
 
-	protected Resource findResource(String resName) {
-		for (Resource eachResource : resources) {
-			if (eachResource.getName().equalsIgnoreCase(resName)) {
-				return eachResource;
+	protected Node findNode(String nodeName) {
+		for (Node eachNode : nodes) {
+			if (eachNode.getName().equalsIgnoreCase(nodeName)) {
+				return eachNode;
 			}
 		}
 		return null;
@@ -173,7 +173,7 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 		}
 
 		jobs = new ArrayList<Job>();
-		resources = new ArrayList<Resource>();
+		nodes = new ArrayList<Node>();
 
 		initRequestHandlers();
 		STAFResult res = new STAFResult();
@@ -218,11 +218,12 @@ public class DistStafService implements STAFServiceInterfaceLevel30 {
 	private void initRequestHandlers() {
 		requestHandlers = new ArrayList<AbstractStafRequest>();
 		requestHandlers.add(new AddJobRequest(this));
-		requestHandlers.add(new AddResourceRequest(this));
+		requestHandlers.add(new AddNodeRequest(this));
 		requestHandlers.add(new AddTaskRequest(this));
 		requestHandlers.add(new ListRequest(this));
 		requestHandlers.add(new DeleteJobRequest(this));
 		requestHandlers.add(new ExecuteJobRequest(this));
+		requestHandlers.add(new JobStatsRequest(this));
 	}
 
 	protected Job findJob(String jobName) {

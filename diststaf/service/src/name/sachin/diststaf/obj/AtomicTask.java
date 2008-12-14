@@ -7,11 +7,12 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import name.sachin.diststaf.service.DistStafConstants.AlgorithmType;
-import name.sachin.diststaf.service.DistStafConstants.ResourceType;
+import name.sachin.diststaf.service.DistStafConstants.NodeType;
 import name.sachin.diststaf.service.wrapper.FileSystem;
 import name.sachin.diststaf.service.wrapper.Process;
 import name.sachin.diststaf.util.TaskMonitor;
 
+import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
 import com.ibm.staf.STAFResult;
 import com.ibm.staf.service.STAFServiceInterfaceLevel30.RequestInfo;
@@ -24,7 +25,7 @@ public class AtomicTask {
 
 	private String name;
 
-	private Resource resource;
+	private Node node;
 
 	private String algorithm;
 
@@ -37,20 +38,24 @@ public class AtomicTask {
 	private TaskStatus status;
 
 	private ResultStatus resultStatus;
-	
-	public AtomicTask(String name, Resource resource, String algorithm,
+
+	private long startTime;
+
+	private long endTime;
+
+	public AtomicTask(String name, Node node, String algorithm,
 			AlgorithmType algorithmType, String dataFilename, String arguments) {
 		this.name = name;
 		this.algorithm = algorithm;
 		this.algorithmType = algorithmType;
 		this.dataFilename = dataFilename;
 		this.arguments = arguments;
-		this.resource = resource;
+		this.node = node;
 	}
 
 	@Override
 	public String toString() {
-		return "[AtomicTask name:" + name + ",resource:" + resource
+		return "[AtomicTask name:" + name + ",node:" + node
 				+ ",algorithm:" + algorithm + ",algorithmType:" + algorithmType
 				+ ",dataFilename:" + dataFilename + ",arguments:" + arguments
 				+ ",status:" + status + ",resultStatus:" + resultStatus + "]";
@@ -59,15 +64,15 @@ public class AtomicTask {
 	public STAFResult execute(RequestInfo reqInfo, STAFHandle handle,
 			String jobName) {
 		String result = "";
-		String dirName = resource.getName() + "-" + jobName + "-" + name;
+		String dirName = node.getName() + "-" + jobName + "-" + name;
 		String workDir = "{STAF/Env/TEMP}{STAF/Config/Sep/File}" + dirName;
 		FileSystem fsLocal = new FileSystem(handle);
 
-		Process procResource = new Process(resource.getName(), handle);
-		FileSystem fsResource = new FileSystem(resource.getName(), handle);
-
-		if (ResourceType.MACHINE == resource.getType()) {
-			LOG.info("Algorithm is received for resource: " + resource);
+		Process procNode = new Process(node.getName(), handle);
+		FileSystem fsNode = new FileSystem(node.getName(), handle);
+		this.startTime = System.currentTimeMillis();
+		if (NodeType.MACHINE == node.getType()) {
+			LOG.info("Algorithm is received for node: " + node);
 
 			if (AlgorithmType.JAR.compareTo(algorithmType) == 0) {
 				File f = new File(algorithm);
@@ -75,38 +80,65 @@ public class AtomicTask {
 				if (dataFilename != null)
 					data = new File(dataFilename);
 				LOG.info("Algorithm File info:" + f.getAbsolutePath());
-				if (fsResource.dirExists(workDir)) {
-					fsResource.deleteEntry(workDir, null, true, true);
+				if (fsNode.dirExists(workDir)) {
+					try {
+						fsNode.deleteEntry(workDir, null, true, true);
+					} catch (STAFException e) {
+						LOG.error("STAFException received", e);
+						return new STAFResult(e.rc, e.getLocalizedMessage());
+					}
 				}
-				fsResource.createDirectory(workDir, true, true);
+				try {
+					fsNode.createDirectory(workDir, true, true);
+				} catch (STAFException e1) {
+					LOG.error("STAFException received", e1);
+					return new STAFResult(e1.rc, e1.getLocalizedMessage());
+				}
 				if (f.isFile()) {
-					fsLocal.copyFileToMachineToDirectory(f.getAbsolutePath(),
-							resource.getName(), workDir);
-					if (data != null)
+					try {
 						fsLocal
-								.copyFileToMachineToDirectory(data
-										.getAbsolutePath(), resource.getName(),
+								.copyFileToMachineToDirectory(f
+										.getAbsolutePath(), node.getName(),
 										workDir);
-					result = procResource.startInBackground("java -jar "
-							+ f.getName()
-							+ (arguments == null ? "" : " " + arguments),
-							workDir + "{STAF/Config/Sep/File}stdout.txt",
-							workDir + "{STAF/Config/Sep/File}stderr.txt",
-							workDir);
+						if (data != null)
+							fsLocal.copyFileToMachineToDirectory(data
+									.getAbsolutePath(), node.getName(),
+									workDir);
+					} catch (STAFException e) {
+						LOG.error("STAFException received", e);
+						return new STAFResult(e.rc, e.getLocalizedMessage());
+					}
+					try {
+						result = procNode.startInBackground("java -jar "
+								+ f.getName()
+								+ (arguments == null ? "" : " " + arguments),
+								workDir + "{STAF/Config/Sep/File}stdout.txt",
+								workDir + "{STAF/Config/Sep/File}stderr.txt",
+								workDir);
+					} catch (STAFException e) {
+						LOG.error("STAFException", e);
+						return new STAFResult(e.rc, e.getLocalizedMessage());
+					}
 				} else {
 					return new STAFResult(ALGORITHM_NOT_FILE,
 							"Algorithm is not a file for task:" + this);
 				}
 			} else {
-				result = procResource.startInBackground(algorithm
-						+ (arguments == null ? "" : " " + arguments), workDir
-						+ "{STAF/Config/Sep/File}stdout.txt", workDir
-						+ "{STAF/Config/Sep/File}stderr.txt", workDir);
+				try {
+					result = procNode.startInBackground(algorithm
+							+ (arguments == null ? "" : " " + arguments),
+							workDir + "{STAF/Config/Sep/File}stdout.txt",
+							workDir + "{STAF/Config/Sep/File}stderr.txt",
+							workDir);
+				} catch (STAFException e) {
+					LOG.error("STAFException", e);
+					return new STAFResult(e.rc, e.getLocalizedMessage());
+				}
 			}
 		}
 		this.status = TaskStatus.RUNNING;
 		this.resultStatus = ResultStatus.NOTRECEIVED;
-		new TaskMonitor(this, result, dirName, procResource, fsResource)
+		new TaskMonitor(this, result, dirName, procNode, fsNode)
 				.start();
 		return new STAFResult(STAFResult.Ok, result);
 	}
@@ -119,12 +151,12 @@ public class AtomicTask {
 		this.name = name;
 	}
 
-	public Resource getResource() {
-		return resource;
+	public Node getNode() {
+		return node;
 	}
 
-	public void setResource(Resource resource) {
-		this.resource = resource;
+	public void setNode(Node node) {
+		this.node = node;
 	}
 
 	public String getAlgorithm() {
@@ -181,6 +213,22 @@ public class AtomicTask {
 
 	public void setResultStatus(ResultStatus resultStatus) {
 		this.resultStatus = resultStatus;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
 
 }

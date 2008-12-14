@@ -63,7 +63,7 @@ public interface DistStafConstants {
 		FINISHED
 	}
 	
-	public enum ResourceType {
+	public enum NodeType {
 		MACHINE
 	}
 	
@@ -100,14 +100,14 @@ public interface DistStafConstants {
 	public static final String DISTSTAF_SRV_NAME = "diststaf";
 	
 	public static final int JOB_DOESNT_EXIST = 4021;
-	public static final int RESOURCE_DOESNT_EXIST = 4020;
+	public static final int NODE_DOESNT_EXIST = 4020;
 	public static final int TASK_ALREADY_ASSIGNED = 4022;
 	public static final int ADD_TASK_FAILED = 4023;
 	public static final int TASK_DOESNT_EXIST = 4024;
 
 
-	public static final int RESOURCE_EXISTS = 4010;
-	public static final int ADD_RESOURCE_FAILED = 4011;
+	public static final int NODE_EXISTS = 4010;
+	public static final int ADD_NODE_FAILED = 4011;
 	
 	public static final int EXECUTEJOB_FAILED = 4030;
 	
@@ -119,9 +119,9 @@ public interface DistStafConstants {
 	
 	public static final int DELETE_JOB_TRUST_LEVEL = 3;
 	
-	public static final int ASSIGNRESOURCETOJOB_TRUST_LEVEL = 3;
+	public static final int ASSIGNNODETOJOB_TRUST_LEVEL = 3;
 	
-	public static final int ADDRESOURCE_TRUST_LEVEL = 3;
+	public static final int ADDNODE_TRUST_LEVEL = 3;
 	
 	public static final int ADDJOB_TRUST_LEVEL = 3;
 	

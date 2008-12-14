@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ibm.staf.STAFException;
 import com.ibm.staf.STAFHandle;
 
 public class ServiceTest {
@@ -37,7 +38,7 @@ public class ServiceTest {
 	}
 
 	@Test
-	public void testList() {
+	public void testList() throws STAFException {
 		List<Map> rsp = srvLocal.list();
 		assertEquals(16, rsp.size());
 		List<String> srvList = new ArrayList<String>();

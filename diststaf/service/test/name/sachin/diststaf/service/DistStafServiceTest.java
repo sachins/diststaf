@@ -58,18 +58,18 @@ public class DistStafServiceTest {
 	public void testExecute() throws STAFException {
 		stafHandle.submit(distStafHost, "diststaf",
 				"addjob testjob algorithm dir");
-		// stafHandle.submit(distStafHost, "diststaf", "addresource local type
+		// stafHandle.submit(distStafHost, "diststaf", "addnode local type
 		// machine");
-		// stafHandle.submit(distStafHost, "diststaf", "assignresourcetojob
+		// stafHandle.submit(distStafHost, "diststaf", "assignnodetojob
 		// local job testjob");
-		// stafHandle.submit(distStafHost, "diststaf", "addresource
+		// stafHandle.submit(distStafHost, "diststaf", "addnode
 		// sachins-linux type machine");
-		// stafHandle.submit(distStafHost, "diststaf", "assignresourcetojob
+		// stafHandle.submit(distStafHost, "diststaf", "assignnodetojob
 		// sachins-linux job testjob");
 		stafHandle.submit(distStafHost, "diststaf",
-				"addresource sachin.name type machine");
+				"addnode sachin.name type machine");
 		stafHandle.submit(distStafHost, "diststaf",
-				"assignresourcetojob sachin.name job testjob");
+				"assignnodetojob sachin.name job testjob");
 		String result = stafHandle.submit(distStafHost, "diststaf",
 				"executejob testjob");
 		System.out.println("Result:" + result);
@@ -85,13 +85,13 @@ public class DistStafServiceTest {
 						"diststaf",
 						"addjob testjob algorithm \"C:/Documents and Settings/sachins/workspace/diststaf/target/jar/sample.jar\" algorithmtype jar data \"C:/Documents and Settings/sachins/workspace/diststaf/service/sampledata.txt\"");
 		stafHandle.submit(distStafHost, "diststaf",
-				"addresource local type machine");
+				"addnode local type machine");
 		stafHandle.submit(distStafHost, "diststaf",
-				"assignresourcetojob local job testjob");
+				"assignnodetojob local job testjob");
 		stafHandle.submit(distStafHost, "diststaf",
-				"addresource sachin.name type machine");
+				"addnode sachin.name type machine");
 		stafHandle.submit(distStafHost, "diststaf",
-				"assignresourcetojob sachin.name job testjob");
+				"assignnodetojob sachin.name job testjob");
 		String result = stafHandle.submit(distStafHost, "diststaf",
 				"executejob testjob");
 		System.out.println("Result:" + result);
